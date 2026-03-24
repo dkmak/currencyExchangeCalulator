@@ -1,9 +1,8 @@
 # **Android App Template** - Darryl Mak
 
 (Description):
-1. **Action 1** - Display a list of available sports leagues
-2. **Action 2** - Browse teams within a selected league
-3. **Action 3** - View detailed information about a team
+1. **Action 1** - *Action 1*
+2. **Action 2** - *Action 2*
 
 (insert visuals, video)
 
@@ -40,7 +39,6 @@
 - Proper error messages for the user.
 
 ### Modularization
-- Implement features and other architectural components in separate modules.
 - Maintain proper dependency direction
 - Keep modules focused and single-purpose.
 
