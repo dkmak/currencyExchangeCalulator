@@ -1,4 +1,4 @@
-package com.androidapptemplate.ui.theme
+package com.currencyexchangecalculator.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

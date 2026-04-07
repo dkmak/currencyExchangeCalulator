@@ -1,4 +1,4 @@
-package com.androidapptemplate
+package com.currencyexchangecalculator
 
 import org.junit.Test
 
