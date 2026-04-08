@@ -10,11 +10,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -156,11 +161,10 @@ fun ExchangeCalculator(
             textFieldValue = usdTextField,
             onCurrencyTextFieldChanged = onUsdTextFieldChanged,
             onClick = {},
-            onClickTextField = onClickTextField,
-            modifier = Modifier.fillMaxWidth()
+            onClickTextField = onClickTextField
         )
 
-        Spacer(modifier = Modifier.padding(16.dp))
+        Spacer(modifier = Modifier.padding(8.dp))
 
         CurrencyItem(
             label = "MXN",
@@ -168,7 +172,6 @@ fun ExchangeCalculator(
             onCurrencyTextFieldChanged = onCurrencyTextFieldChanged,
             onClick = {},
             onClickTextField = onClickTextField,
-            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -182,42 +185,55 @@ private fun CurrencyItem(
     onClickTextField: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge
+    Card(
+        modifier = modifier
+            .height(66.dp)
+            .fillMaxWidth()
+        ,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
         )
-
-        Spacer(modifier = Modifier.weight(1f))
-        BasicTextField(
-            value = textFieldValue,
-            onValueChange = { newValue ->
-                onCurrencyTextFieldChanged(newValue)
-            },
-            modifier = Modifier
-                .wrapContentWidth()
-                .onFocusChanged{ focusState ->
-                    if (focusState.isFocused) {
-                        onClickTextField()
-                    }
-                }
+    ){
+        Row(
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp)
             ,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number
-            ),
-            visualTransformation = CurrencyVisualTransformation(),
-            textStyle = LocalTextStyle.current.copy(
-                textAlign = TextAlign.End
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyLarge
             )
-        )
+
+            Spacer(modifier = Modifier.weight(1f))
+            BasicTextField(
+                value = textFieldValue,
+                onValueChange = { newValue ->
+                    onCurrencyTextFieldChanged(newValue)
+                },
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .onFocusChanged{ focusState ->
+                        if (focusState.isFocused) {
+                            onClickTextField()
+                        }
+                    }
+                ,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number
+                ),
+                visualTransformation = CurrencyVisualTransformation(),
+                textStyle = LocalTextStyle.current.copy(
+                    textAlign = TextAlign.End
+                )
+            )
+        }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFFEFEFEC)
 @Composable
 private fun CurrencyItemPreview() {
     CurrencyExchangeCalculatorTheme {
