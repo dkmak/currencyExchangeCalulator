@@ -17,7 +17,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.currencyexchangecalculator.presentation.HomeUiState
 import com.currencyexchangecalculator.presentation.HomeViewModel
@@ -57,7 +56,7 @@ fun CurrencyExchangeCalculatorApp(
                     Row(modifier = Modifier.fillMaxWidth()) { CircularProgressIndicator() }
                 }
                 is HomeUiState.Success -> {
-                    state.currency?.forEach { currencyDTO ->
+                    state.books?.forEach { currencyDTO ->
                         Text(text = currencyDTO?.book?:"No book found")
                     }
                 }

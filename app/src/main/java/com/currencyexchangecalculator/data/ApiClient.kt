@@ -1,5 +1,6 @@
 package com.currencyexchangecalculator.data
 
+import com.currencyexchangecalculator.data.dto.BookDTO
 import kotlinx.serialization.Serializable
 import retrofit2.http.GET
 import javax.inject.Inject
@@ -7,22 +8,14 @@ import javax.inject.Inject
 class ApiClient @Inject constructor(
     private val apiService: ApiService
 ) {
-    suspend fun getCurrencies(): List<CurrencyDTO?> {
+    suspend fun getBooks(): List<BookDTO?> {
         return apiService.getCurrencies()
     }
 }
 
 interface ApiService {
-    @GET("v1/tickers?currencies=MXN,ARS,EURC")
+    @GET("v1/tickers?currencies=MXN")
     suspend fun getCurrencies(
-    ): List<CurrencyDTO?>
+    ): List<BookDTO?>
 }
-
-@Serializable
-data class CurrencyDTO(
-    val ask: String,
-    val bid: String,
-    val book: String,
-    val date: String
-)
 
