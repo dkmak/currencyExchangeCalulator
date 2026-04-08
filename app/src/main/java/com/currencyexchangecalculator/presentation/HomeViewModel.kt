@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import java.math.BigDecimal
+import java.math.RoundingMode
 import javax.inject.Inject
 
 
@@ -44,44 +44,76 @@ class HomeViewModel @Inject constructor(
             .onEach { result ->
                 _uiState.update { currentState ->
                     val dataState = result.toDataState()
-                    currentState.copy(
-                        usdTextField = "1",
-                        currencyTextField = "",
-                        dataState = dataState,
-                    )
+                    if (dataState is HomeUiState.HomeDataState.Success){
+                        val book = dataState.book
+                        val start = "1"
+                        currentState.copy(
+                            dataState = dataState,
+                            usdTextField = "1",
+                            currencyTextField = convertUsdcToCurrency(book.ask, start)
+                        )
+                    } else {
+                        currentState.copy(
+                            dataState = dataState,
+                        )
+                    }
                 }
             }
             .launchIn(viewModelScope)
     }
 
     fun onUsdTextFieldChanged(value: String) {
-        if (value.isEmpty() || value.all { character -> character.isDigit() }) {
+        if (isValidInput(value)) {
             _uiState.update { currentState ->
-                currentState.copy(usdTextField = value)
+                val book = (currentState.dataState as? HomeUiState.HomeDataState.Success)?.book
+                val convertCurrency = if (book != null && value.isNotEmpty()) {
+                    convertUsdcToCurrency(book.ask, value)
+                } else {
+                    ""
+                }
+                currentState.copy(
+                    usdTextField = value,
+                    currencyTextField = convertCurrency
+                )
             }
         }
     }
 
     fun onCurrencyTextFieldChanged(value: String) {
-        if (value.isEmpty() || value.all { character -> character.isDigit() }) {
+        if (isValidInput(value)) {
             _uiState.update { currentState ->
-                currentState.copy(currencyTextField = value)
+                val book = (currentState.dataState as? HomeUiState.HomeDataState.Success)?.book
+                val convertCurrency = if (book != null && value.isNotEmpty()) {
+                    convertCurrencyToUsdc(book.ask, value)
+                } else {
+                    ""
+                }
+                currentState.copy(
+                    usdTextField = convertCurrency,
+                    currencyTextField = value
+                )
             }
         }
     }
 
-    private fun convertCurrency(price: BigDecimal, value: BigDecimal): String? {
-        val dataState = uiState.value.dataState as? HomeUiState.HomeDataState.Success
-        dataState?.book?.let{ book ->
-            val askPrice = book.ask
+    private fun convertUsdcToCurrency(price: String, value: String): String {
+        return value.toBigDecimalOrNull()?.multiply(price.toBigDecimalOrNull())
+            ?.setScale(2, RoundingMode.HALF_UP)
+            ?.toString()
+            .orEmpty()
+    }
 
-        }
-        return ""
+    private fun convertCurrencyToUsdc(price: String, value: String): String {
+        return value.toBigDecimalOrNull()?.divide(price.toBigDecimalOrNull(), 2, RoundingMode.HALF_UP)
+            ?.toString()
+            .orEmpty()
     }
 
     private fun CurrencyResult.toDataState(): HomeUiState.HomeDataState {
         return when (this) {
-            is CurrencyResult.CurrencySuccess -> HomeUiState.HomeDataState.Success(book = this.book)
+            is CurrencyResult.CurrencySuccess -> HomeUiState.HomeDataState.Success(
+                book = this.book
+            )
             is CurrencyResult.CurrencyError.Backend -> HomeUiState.HomeDataState.Failure(
                 message = this.toUserMessage()
             )
@@ -92,5 +124,15 @@ class HomeViewModel @Inject constructor(
                 message = this.toUserMessage()
             )
         }
+    }
+
+    private fun isValidInput(value: String): Boolean {
+        if (value.isEmpty()) return true
+        val parts = value.split('.')
+
+        if (parts.size > 2) return false
+        if (parts.any { part -> part.any { !it.isDigit() } }) return false
+
+        return parts.size == 1 || parts[1].length <= 2
     }
 }

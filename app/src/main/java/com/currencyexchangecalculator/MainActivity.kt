@@ -10,19 +10,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,6 +34,7 @@ import com.currencyexchangecalculator.domain.Book
 import com.currencyexchangecalculator.presentation.HomeUiState
 import com.currencyexchangecalculator.presentation.HomeViewModel
 import com.currencyexchangecalculator.presentation.theme.CurrencyExchangeCalculatorTheme
+import com.currencyexchangecalculator.ui.CurrencyVisualTransformation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -71,12 +74,20 @@ fun CurrencyExchangeCalculatorApp(
 
                 is HomeUiState.HomeDataState.Success -> {
                     ExchangeCalculator(
-                        book = dataState.book, // this should be put elsewhere
+                        book = dataState.book,
                         usdTextField = uiState.usdTextField,
                         currencyTextField = uiState.currencyTextField,
                         exchangeToUSD = uiState.convertFromUSDc,
-                        onUsdTextFieldChanged = viewModel::onUsdTextFieldChanged,
-                        onCurrencyTextFieldChanged = viewModel::onCurrencyTextFieldChanged,
+                        onUsdTextFieldChanged = { newValue ->
+                            viewModel.onUsdTextFieldChanged(
+                                newValue
+                            )
+                        },
+                        onCurrencyTextFieldChanged = { newValue ->
+                            viewModel.onCurrencyTextFieldChanged(
+                                newValue
+                            )
+                        },
                         onChangeCurrency = {},
                         modifier = Modifier
                             .padding(
@@ -109,67 +120,90 @@ fun ExchangeCalculator(
                 fontSize = 30.sp
             )
         )
+        val subtitle = if (exchangeToUSD) {
+            "1 USDc = ${trimZeros(book.ask)} MXN"
+        } else {
+            "1 USDc = ${trimZeros(book.bid)} MXN"
+        }
+
         Text(
-            text = "1 USDc",
+            text = subtitle,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.padding(vertical = 8.dp)
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "USDc",
-                style = MaterialTheme.typography.bodyLarge
-            )
+        CurrencyItem(
+            label ="USDc",
+            textFieldValue = usdTextField,
+            onCurrencyTextFieldChanged = onUsdTextFieldChanged,
+            onClick = {},
+            modifier = Modifier.fillMaxWidth()
+        )
 
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = "$",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            TextField(
-                value = usdTextField,
-                onValueChange = onUsdTextFieldChanged,
-                modifier = Modifier.width(140.dp),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number
-                ),
-                textStyle = LocalTextStyle.current.copy(
-                    textAlign = TextAlign.End
-                )
-            )
-        }
+        Spacer(modifier = Modifier.padding(16.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "MXN",
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = "$",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            TextField(
-                value = currencyTextField,
-                onValueChange = onCurrencyTextFieldChanged,
-                modifier = Modifier.width(140.dp),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number
-                ),
-                textStyle = LocalTextStyle.current.copy(
-                    textAlign = TextAlign.End
-                )
-            )
-        }
+        CurrencyItem(
+            label = "MXN",
+            textFieldValue = currencyTextField,
+            onCurrencyTextFieldChanged = onCurrencyTextFieldChanged,
+            onClick = {},
+            modifier = Modifier.fillMaxWidth()
+        )
     }
+}
+
+@Composable
+private fun CurrencyItem(
+    label: String,
+    textFieldValue: String,
+    onCurrencyTextFieldChanged: (String) -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+        BasicTextField(
+            value = textFieldValue,
+            onValueChange = onCurrencyTextFieldChanged,
+            modifier = Modifier
+                .wrapContentWidth()
+                .widthIn(min = 40.dp),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number
+            ),
+            visualTransformation = CurrencyVisualTransformation(),
+            textStyle = LocalTextStyle.current.copy(
+                textAlign = TextAlign.End
+            )
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CurrencyItemPreview() {
+    CurrencyExchangeCalculatorTheme {
+        CurrencyItem(
+            label = "MXN",
+            textFieldValue = "18.42",
+            onCurrencyTextFieldChanged = {},
+            onClick = {},
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+
+private fun trimZeros(number: String): String? {
+    return number.toBigDecimalOrNull()?.stripTrailingZeros()?.toPlainString()
 }
