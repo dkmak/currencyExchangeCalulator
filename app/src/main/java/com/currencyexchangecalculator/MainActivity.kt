@@ -23,7 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -73,19 +75,29 @@ fun CurrencyExchangeCalculatorApp(
                 }
 
                 is HomeUiState.HomeDataState.Success -> {
+                    val usdcTextFieldValue = TextFieldValue(
+                        text = uiState.usdcTextField,
+                        selection = TextRange(uiState.usdcTextField.length)
+                    )
+
+                    val currencyTextFieldValue = TextFieldValue(
+                        text = uiState.currencyTextField,
+                        selection = TextRange(uiState.currencyTextField.length)
+                    )
+
                     ExchangeCalculator(
                         book = dataState.book,
-                        usdTextField = uiState.usdTextField,
-                        currencyTextField = uiState.currencyTextField,
+                        usdTextField = usdcTextFieldValue,
+                        currencyTextField = currencyTextFieldValue,
                         exchangeToUSD = uiState.convertFromUSDc,
                         onUsdTextFieldChanged = { newValue ->
                             viewModel.onUsdTextFieldChanged(
-                                newValue
+                                newValue.text
                             )
                         },
                         onCurrencyTextFieldChanged = { newValue ->
                             viewModel.onCurrencyTextFieldChanged(
-                                newValue
+                                newValue.text
                             )
                         },
                         onChangeCurrency = {},
@@ -105,11 +117,11 @@ fun CurrencyExchangeCalculatorApp(
 @Composable
 fun ExchangeCalculator(
     book: Book,
-    usdTextField: String,
-    currencyTextField: String,
+    usdTextField: TextFieldValue,
+    currencyTextField: TextFieldValue,
     exchangeToUSD: Boolean,
-    onUsdTextFieldChanged: (String) -> Unit,
-    onCurrencyTextFieldChanged: (String) -> Unit,
+    onUsdTextFieldChanged: (TextFieldValue) -> Unit,
+    onCurrencyTextFieldChanged: (TextFieldValue) -> Unit,
     onChangeCurrency: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -134,7 +146,7 @@ fun ExchangeCalculator(
         )
 
         CurrencyItem(
-            label ="USDc",
+            label = "USDc",
             textFieldValue = usdTextField,
             onCurrencyTextFieldChanged = onUsdTextFieldChanged,
             onClick = {},
@@ -156,11 +168,11 @@ fun ExchangeCalculator(
 @Composable
 private fun CurrencyItem(
     label: String,
-    textFieldValue: String,
-    onCurrencyTextFieldChanged: (String) -> Unit,
+    textFieldValue: TextFieldValue,
+    onCurrencyTextFieldChanged: (TextFieldValue) -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
-){
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -173,7 +185,13 @@ private fun CurrencyItem(
         Spacer(modifier = Modifier.weight(1f))
         BasicTextField(
             value = textFieldValue,
-            onValueChange = onCurrencyTextFieldChanged,
+            onValueChange = { newValue ->
+                onCurrencyTextFieldChanged(
+                    newValue.copy(
+                        selection = TextRange(newValue.text.length)
+                    )
+                )
+            },
             modifier = Modifier
                 .wrapContentWidth()
                 .widthIn(min = 40.dp),
@@ -195,7 +213,7 @@ private fun CurrencyItemPreview() {
     CurrencyExchangeCalculatorTheme {
         CurrencyItem(
             label = "MXN",
-            textFieldValue = "18.42",
+            textFieldValue = TextFieldValue("18.42"),
             onCurrencyTextFieldChanged = {},
             onClick = {},
             modifier = Modifier.padding(16.dp)

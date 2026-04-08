@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 data class HomeUiState(
     val convertFromUSDc: Boolean = true,
-    val usdTextField: String = "",
+    val usdcTextField: String = "",
     val currencyTextField: String = "",
     val dataState: HomeDataState = HomeDataState.Loading,
 ) {
@@ -49,7 +49,7 @@ class HomeViewModel @Inject constructor(
                         val start = "1"
                         currentState.copy(
                             dataState = dataState,
-                            usdTextField = "1",
+                            usdcTextField = "1",
                             currencyTextField = convertUsdcToCurrency(book.ask, start)
                         )
                     } else {
@@ -72,7 +72,7 @@ class HomeViewModel @Inject constructor(
                     ""
                 }
                 currentState.copy(
-                    usdTextField = value,
+                    usdcTextField = value,
                     currencyTextField = convertCurrency
                 )
             }
@@ -89,7 +89,7 @@ class HomeViewModel @Inject constructor(
                     ""
                 }
                 currentState.copy(
-                    usdTextField = convertCurrency,
+                    usdcTextField = convertCurrency,
                     currencyTextField = value
                 )
             }
