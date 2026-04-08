@@ -96,6 +96,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun clearTextFieldValues() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                usdcTextField = "",
+                currencyTextField = ""
+            )
+        }
+    }
+
     private fun convertUsdcToCurrency(price: String, value: String): String {
         return value.toBigDecimalOrNull()?.multiply(price.toBigDecimalOrNull())
             ?.setScale(2, RoundingMode.HALF_UP)
