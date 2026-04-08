@@ -41,7 +41,10 @@ internal object NetworkModule {
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(Json {
+                explicitNulls = true
+                ignoreUnknownKeys = true
+            }.asConverterFactory("application/json".toMediaType()))
             .build()
     }
 
