@@ -13,20 +13,25 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
-sealed interface HomeUiState {
-    data class Success(val books: List<Book>): HomeUiState
-    data class Failure(val message: String) : HomeUiState
-    data object Loading : HomeUiState
+
+data class HomeUiState(
+    val convertFromUSDc: Boolean = true,
+    val usdTextField: String = "",
+    val currencyTextField: String = "",
+    val dataState: HomeDataState = HomeDataState.Loading,
+) {
+    sealed interface HomeDataState {
+        data class Success(val books: List<Book>) : HomeDataState
+        data class Failure(val message: String) : HomeDataState
+        data object Loading : HomeDataState
+    }
 }
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: CurrencyRepository
 ) : ViewModel() {
-    private val _textField = MutableStateFlow("")
-    val textField = _textField.asStateFlow()
-
-    val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
+    private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -36,22 +41,39 @@ class HomeViewModel @Inject constructor(
     fun getCurrency() {
         repository.getCurrency()
             .onEach { result ->
-                _uiState.update { result.toUiState() }
+                _uiState.update { currentState ->
+                    currentState.copy(dataState = result.toDataState())
+                }
             }
             .launchIn(viewModelScope)
     }
-    
 
-    private fun CurrencyResult.toUiState(): HomeUiState {
+    fun onUsdTextFieldChanged(value: String) {
+        if (value.isEmpty() || value.all { character -> character.isDigit() }) {
+            _uiState.update { currentState ->
+                currentState.copy(usdTextField = value)
+            }
+        }
+    }
+
+    fun onCurrencyTextFieldChanged(value: String) {
+        if (value.isEmpty() || value.all { character -> character.isDigit() }) {
+            _uiState.update { currentState ->
+                currentState.copy(currencyTextField = value)
+            }
+        }
+    }
+
+    private fun CurrencyResult.toDataState(): HomeUiState.HomeDataState {
         return when (this) {
-            is CurrencyResult.CurrencySuccess -> HomeUiState.Success(books = this.books)
-            is CurrencyResult.CurrencyError.Backend -> HomeUiState.Failure(
+            is CurrencyResult.CurrencySuccess -> HomeUiState.HomeDataState.Success(books = this.books)
+            is CurrencyResult.CurrencyError.Backend -> HomeUiState.HomeDataState.Failure(
                 message = this.toUserMessage()
             )
-            is CurrencyResult.CurrencyError.Network -> HomeUiState.Failure(
+            is CurrencyResult.CurrencyError.Network -> HomeUiState.HomeDataState.Failure(
                 message = this.toUserMessage()
             )
-            is CurrencyResult.CurrencyError.Unknown -> HomeUiState.Failure(
+            is CurrencyResult.CurrencyError.Unknown -> HomeUiState.HomeDataState.Failure(
                 message = this.toUserMessage()
             )
         }
