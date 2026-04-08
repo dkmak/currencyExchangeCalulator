@@ -23,6 +23,9 @@ sealed interface HomeUiState {
 class HomeViewModel @Inject constructor(
     private val repository: CurrencyRepository
 ) : ViewModel() {
+    private val _textField = MutableStateFlow("")
+    val textField = _textField.asStateFlow()
+
     val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
@@ -37,6 +40,7 @@ class HomeViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
     }
+    
 
     private fun CurrencyResult.toUiState(): HomeUiState {
         return when (this) {
