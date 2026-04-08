@@ -71,7 +71,7 @@ fun CurrencyExchangeCalculatorApp(
 
                 is HomeUiState.HomeDataState.Success -> {
                     ExchangeCalculator(
-                        book = dataState.books.first(), // this should be put elsewhere
+                        book = dataState.book, // this should be put elsewhere
                         usdTextField = uiState.usdTextField,
                         currencyTextField = uiState.currencyTextField,
                         exchangeToUSD = uiState.convertFromUSDc,
@@ -126,7 +126,10 @@ fun ExchangeCalculator(
             )
 
             Spacer(modifier = Modifier.weight(1f))
-
+            Text(
+                text = "$",
+                style = MaterialTheme.typography.bodyLarge
+            )
             TextField(
                 value = usdTextField,
                 onValueChange = onUsdTextFieldChanged,
@@ -151,7 +154,10 @@ fun ExchangeCalculator(
             )
 
             Spacer(modifier = Modifier.weight(1f))
-
+            Text(
+                text = "$",
+                style = MaterialTheme.typography.bodyLarge
+            )
             TextField(
                 value = currencyTextField,
                 onValueChange = onCurrencyTextFieldChanged,

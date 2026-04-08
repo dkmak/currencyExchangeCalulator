@@ -12,12 +12,13 @@ import javax.inject.Inject
 
 class CurrencyRepository @Inject constructor(
     private val apiClient: ApiClient
+    // add dispatcher later
 ) {
     fun getCurrency(): Flow<CurrencyResult> = flow<CurrencyResult> {
         val response: List<BookDTO?> = apiClient.getBooks()
         val result = response.mapNotNull { dto ->
             dto?.toDomain()
-        }
+        }.first()
         emit(CurrencyResult.CurrencySuccess(result))
     }.catch { throwable ->
         if (throwable is CancellationException) {

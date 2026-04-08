@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import java.math.BigDecimal
 import javax.inject.Inject
 
 
@@ -21,7 +22,7 @@ data class HomeUiState(
     val dataState: HomeDataState = HomeDataState.Loading,
 ) {
     sealed interface HomeDataState {
-        data class Success(val books: List<Book>) : HomeDataState
+        data class Success(val book: Book) : HomeDataState
         data class Failure(val message: String) : HomeDataState
         data object Loading : HomeDataState
     }
@@ -42,7 +43,12 @@ class HomeViewModel @Inject constructor(
         repository.getCurrency()
             .onEach { result ->
                 _uiState.update { currentState ->
-                    currentState.copy(dataState = result.toDataState())
+                    val dataState = result.toDataState()
+                    currentState.copy(
+                        usdTextField = "1",
+                        currencyTextField = "",
+                        dataState = dataState,
+                    )
                 }
             }
             .launchIn(viewModelScope)
@@ -64,9 +70,18 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun convertCurrency(price: BigDecimal, value: BigDecimal): String? {
+        val dataState = uiState.value.dataState as? HomeUiState.HomeDataState.Success
+        dataState?.book?.let{ book ->
+            val askPrice = book.ask
+
+        }
+        return ""
+    }
+
     private fun CurrencyResult.toDataState(): HomeUiState.HomeDataState {
         return when (this) {
-            is CurrencyResult.CurrencySuccess -> HomeUiState.HomeDataState.Success(books = this.books)
+            is CurrencyResult.CurrencySuccess -> HomeUiState.HomeDataState.Success(book = this.book)
             is CurrencyResult.CurrencyError.Backend -> HomeUiState.HomeDataState.Failure(
                 message = this.toUserMessage()
             )

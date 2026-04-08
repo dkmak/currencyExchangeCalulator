@@ -1,7 +1,7 @@
 package com.currencyexchangecalculator.domain
 
 sealed interface CurrencyResult {
-    data class CurrencySuccess(val books: List<Book>): CurrencyResult
+    data class CurrencySuccess(val book: Book): CurrencyResult
 
     sealed interface CurrencyError: CurrencyResult {
         data object Network : CurrencyError
