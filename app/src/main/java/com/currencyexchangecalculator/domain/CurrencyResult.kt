@@ -9,3 +9,13 @@ sealed interface CurrencyResult {
         data object Unknown : CurrencyError
     }
 }
+
+sealed interface CurrenciesResult {
+    data class CurrenciesSuccess(val currencies: List<CurrencyModel>): CurrenciesResult
+
+    sealed interface CurrenciesError: CurrenciesResult {
+        data object Network : CurrenciesError
+        data object Backend : CurrenciesError
+        data object Unknown : CurrenciesError
+    }
+}

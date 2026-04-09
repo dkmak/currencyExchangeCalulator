@@ -33,14 +33,18 @@ private fun parseBookForCurrency (book: String): Pair<CurrencyModel, CurrencyMod
     }
 
     val baseCurrency = bookParts[0].toCurrencyModel()
-    val exchangeCurrency = bookParts[0].toCurrencyModel()
+    val exchangeCurrency = bookParts[1].toCurrencyModel()
     return (baseCurrency to exchangeCurrency)
 }
 
-private fun String.toCurrencyModel(): CurrencyModel {
-    return when (this){
-        "usdc" -> CurrencyModel.USDC
-        "mxn" -> CurrencyModel.MXN
+fun String.toCurrencyModel(): CurrencyModel {
+    return when (uppercase()){
+        "USDC" -> CurrencyModel.USDC
+        "MXN" -> CurrencyModel.MXN
+        "ARS" -> CurrencyModel.ARS
+        "EURC" -> CurrencyModel.EURC
+        "BRL" -> CurrencyModel.BRL
+        "COP" -> CurrencyModel.COP
         else -> CurrencyModel.Unknown(label ="Unknown Code", code = this)
     }
 }

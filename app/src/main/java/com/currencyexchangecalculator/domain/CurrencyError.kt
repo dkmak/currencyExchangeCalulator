@@ -13,3 +13,14 @@ fun Throwable.toCurrencyDomainError(): CurrencyResult {
         }
     }
 }
+
+fun Throwable.toCurrenciesDomainError(): CurrenciesResult {
+    return when (this) {
+        is IOException -> CurrenciesResult.CurrenciesError.Network
+        is NoSuchElementException -> CurrenciesResult.CurrenciesError.Backend
+        is HttpException -> CurrenciesResult.CurrenciesError.Backend
+        else -> {
+            CurrenciesResult.CurrenciesError.Unknown
+        }
+    }
+}

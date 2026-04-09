@@ -58,7 +58,7 @@ fun CurrencyExchangeCalculatorScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             when (val dataState = uiState.dataState) {
-                is HomeUiState.HomeDataState.Failure -> {
+                is HomeUiState.CurrencyDataState.Failure -> {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -66,7 +66,7 @@ fun CurrencyExchangeCalculatorScreen(
                     ) { Text(text = dataState.message) }
                 }
 
-                HomeUiState.HomeDataState.Loading -> {
+                HomeUiState.CurrencyDataState.Loading -> {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -76,7 +76,7 @@ fun CurrencyExchangeCalculatorScreen(
                     ) { CircularProgressIndicator() }
                 }
 
-                is HomeUiState.HomeDataState.Success -> {
+                is HomeUiState.CurrencyDataState.Success -> {
                     ExchangeCalculator(
                         book = dataState.book,
                         usdTextField = uiState.usdcTextField,
@@ -104,6 +104,11 @@ fun CurrencyExchangeCalculatorScreen(
                             )
                             .fillMaxWidth()
                     )
+                    if (uiState.availableCurrenciesState is HomeUiState.AvailableCurrenciesState.Success){
+                        (uiState.availableCurrenciesState as HomeUiState.AvailableCurrenciesState.Success).currencies.forEach { currency ->
+                            Text(currency.label)
+                        }
+                    }
                 }
             }
         }
