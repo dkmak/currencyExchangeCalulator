@@ -18,7 +18,6 @@ fun BookDTO.toDomain(): Book {
     return Book(
         ask = this.ask,
         bid = this.bid,
-        book = this.book,
         baseCurrency = baseCurrency,
         exchangeCurrency = exchangeCurrency,
         date = this.date

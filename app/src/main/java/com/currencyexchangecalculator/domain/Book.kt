@@ -5,6 +5,5 @@ data class Book (
     val bid: String,
     val baseCurrency: CurrencyModel,
     val exchangeCurrency: CurrencyModel,
-    val book: String,
     val date: String
 )

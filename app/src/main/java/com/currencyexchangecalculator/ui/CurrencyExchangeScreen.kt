@@ -133,7 +133,7 @@ fun ExchangeCalculator(
         val subtitle = if (exchangeFromUSD) {
             "${book.baseCurrency.label} = ${trimZeros(book.ask)} ${book.exchangeCurrency.label}"
         } else {
-            "${book.baseCurrency.code} = ${trimZeros(book.bid)} ${book.baseCurrency.code}"
+            "${book.baseCurrency.label} = ${trimZeros(book.bid)} ${book.exchangeCurrency.label}"
         }
 
         Text(
@@ -283,7 +283,6 @@ private fun ExchangeCalculatorPreview() {
             book = Book(
                 ask = "18.42",
                 bid = "18.31",
-                book = "mxn_usdc",
                 date = "2026-04-08",
                 baseCurrency = CurrencyModel.USDC,
                 exchangeCurrency = CurrencyModel.MXN
