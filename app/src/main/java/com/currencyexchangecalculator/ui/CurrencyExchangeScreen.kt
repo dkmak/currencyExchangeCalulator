@@ -69,7 +69,7 @@ fun CurrencyExchangeCalculatorScreen(
                         book = dataState.book,
                         usdTextField = uiState.usdcTextField,
                         currencyTextField = uiState.currencyTextField,
-                        exchangeFromUSD = uiState.convertFromUSDc,
+                        exchangeFromUSD = uiState.exchangeFromUSDc,
                         onUsdTextFieldChanged = { newValue ->
                             viewModel.onUsdTextFieldChanged(
                                 newValue

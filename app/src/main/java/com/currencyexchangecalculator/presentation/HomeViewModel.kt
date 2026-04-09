@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 
 data class HomeUiState(
-    val convertFromUSDc: Boolean = true, // rememberSavable
+    val exchangeFromUSDc: Boolean = true, // rememberSavable
     val usdcTextField: String = "",
     val currencyTextField: String = "",
     val dataState: HomeDataState = HomeDataState.Loading,
@@ -36,21 +36,24 @@ class HomeViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        getCurrency()
+        updateCurrency()
     }
 
-    fun getCurrency() {
+    fun updateCurrency() {
         repository.getCurrency()
             .onEach { result ->
                 _uiState.update { currentState ->
                     val dataState = result.toDataState()
                     if (dataState is HomeUiState.HomeDataState.Success){
                         val book = dataState.book
+                        val rate = if (currentState.exchangeFromUSDc) book.ask else {
+                            book.bid
+                        }
                         val start = "1"
                         currentState.copy(
                             dataState = dataState,
                             usdcTextField = "1",
-                            currencyTextField = convertUsdcToCurrency(book.ask, start)
+                            currencyTextField = convertUsdcToCurrency(rate, start)
                         )
                     } else {
                         currentState.copy(
@@ -67,7 +70,10 @@ class HomeViewModel @Inject constructor(
             _uiState.update { currentState ->
                 val book = (currentState.dataState as? HomeUiState.HomeDataState.Success)?.book
                 val convertCurrency = if (book != null && value.isNotEmpty()) {
-                    convertUsdcToCurrency(book.ask, value)
+                    val rate = if (currentState.exchangeFromUSDc) book.ask else {
+                        book.bid
+                    }
+                    convertUsdcToCurrency(rate, value)
                 } else {
                     ""
                 }
@@ -108,7 +114,7 @@ class HomeViewModel @Inject constructor(
     fun updateConvertFromUSDc(){
         _uiState.update { currentState ->
             currentState.copy(
-                convertFromUSDc = !currentState.convertFromUSDc
+                exchangeFromUSDc = !currentState.exchangeFromUSDc
             )
         }
     }
