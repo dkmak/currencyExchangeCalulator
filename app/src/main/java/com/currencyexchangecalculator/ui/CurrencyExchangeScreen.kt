@@ -1,6 +1,6 @@
 package com.currencyexchangecalculator.ui
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -69,7 +69,7 @@ fun CurrencyExchangeCalculatorScreen(
                         book = dataState.book,
                         usdTextField = uiState.usdcTextField,
                         currencyTextField = uiState.currencyTextField,
-                        exchangeToUSD = uiState.convertFromUSDc,
+                        exchangeFromUSD = uiState.convertFromUSDc,
                         onUsdTextFieldChanged = { newValue ->
                             viewModel.onUsdTextFieldChanged(
                                 newValue
@@ -84,6 +84,7 @@ fun CurrencyExchangeCalculatorScreen(
                             viewModel.clearTextFieldValues()
                         },
                         onChangeCurrency = {},
+                        onSwapConversion = { viewModel.updateConvertFromUSDc() },
                         modifier = Modifier
                             .padding(
                                 vertical = 100.dp,
@@ -102,11 +103,12 @@ fun ExchangeCalculator(
     book: Book,
     usdTextField: String,
     currencyTextField: String,
-    exchangeToUSD: Boolean,
+    exchangeFromUSD: Boolean,
     onUsdTextFieldChanged: (String) -> Unit,
     onCurrencyTextFieldChanged: (String) -> Unit,
     onClickTextField: () -> Unit,
     onChangeCurrency: () -> Unit,
+    onSwapConversion: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -116,7 +118,7 @@ fun ExchangeCalculator(
                 fontSize = 30.sp
             )
         )
-        val subtitle = if (exchangeToUSD) {
+        val subtitle = if (exchangeFromUSD) {
             "1 USDc = ${trimZeros(book.ask)} MXN"
         } else {
             "1 USDc = ${trimZeros(book.bid)} MXN"
@@ -133,32 +135,51 @@ fun ExchangeCalculator(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize()
             ) {
-                CurrencyItem(
-                    label = "USDc",
-                    textFieldValue = usdTextField,
-                    onCurrencyTextFieldChanged = onUsdTextFieldChanged,
-                    onClick = {},
-                    onClickTextField = onClickTextField
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                CurrencyItem(
-                    label = "MXN",
-                    textFieldValue = currencyTextField,
-                    onCurrencyTextFieldChanged = onCurrencyTextFieldChanged,
-                    onClick = {},
-                    onClickTextField = onClickTextField,
-                )
-
+                if (exchangeFromUSD) {
+                    CurrencyItem(
+                        label = "USDc",
+                        textFieldValue = usdTextField,
+                        onCurrencyTextFieldChanged = onUsdTextFieldChanged,
+                        onClick = {},
+                        onClickTextField = onClickTextField
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    CurrencyItem(
+                        label = "MXN",
+                        textFieldValue = currencyTextField,
+                        onCurrencyTextFieldChanged = onCurrencyTextFieldChanged,
+                        onClick = {},
+                        onClickTextField = onClickTextField,
+                    )
+                } else {
+                    CurrencyItem(
+                        label = "MXN",
+                        textFieldValue = currencyTextField,
+                        onCurrencyTextFieldChanged = onCurrencyTextFieldChanged,
+                        onClick = {},
+                        onClickTextField = onClickTextField,
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    CurrencyItem(
+                        label = "USDc",
+                        textFieldValue = usdTextField,
+                        onCurrencyTextFieldChanged = onUsdTextFieldChanged,
+                        onClick = {},
+                        onClickTextField = onClickTextField
+                    )
+                }
             }
 
-            IconButton (
-                onClick = {},
+            IconButton(
+                onClick = { onSwapConversion() },
                 modifier = Modifier
                     .align(Alignment.Center)
 
-            ){
+            ) {
                 Icon(
                     painterResource(R.drawable.arrow_arq),
                     contentDescription = "Swap Converstion",
@@ -168,7 +189,6 @@ fun ExchangeCalculator(
 
 
         }
-
 
 
     }
@@ -186,17 +206,15 @@ private fun CurrencyItem(
     Card(
         modifier = modifier
             .height(66.dp)
-            .fillMaxWidth()
-        ,
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
-    ){
+    ) {
         Row(
             Modifier
                 .fillMaxSize()
-                .padding(16.dp)
-            ,
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -212,12 +230,11 @@ private fun CurrencyItem(
                 },
                 modifier = Modifier
                     .wrapContentWidth()
-                    .onFocusChanged{ focusState ->
+                    .onFocusChanged { focusState ->
                         if (focusState.isFocused) {
                             onClickTextField()
                         }
-                    }
-                ,
+                    },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
@@ -259,11 +276,12 @@ private fun ExchangeCalculatorPreview() {
             ),
             usdTextField = "1",
             currencyTextField = "18.42",
-            exchangeToUSD = true,
+            exchangeFromUSD = true,
             onUsdTextFieldChanged = {},
             onCurrencyTextFieldChanged = {},
             onClickTextField = {},
             onChangeCurrency = {},
+            onSwapConversion = {},
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()

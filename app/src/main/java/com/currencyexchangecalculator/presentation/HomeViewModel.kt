@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 
 data class HomeUiState(
-    val convertFromUSDc: Boolean = true,
+    val convertFromUSDc: Boolean = true, // rememberSavable
     val usdcTextField: String = "",
     val currencyTextField: String = "",
     val dataState: HomeDataState = HomeDataState.Loading,
@@ -101,6 +101,14 @@ class HomeViewModel @Inject constructor(
             currentState.copy(
                 usdcTextField = "",
                 currencyTextField = ""
+            )
+        }
+    }
+
+    fun updateConvertFromUSDc(){
+        _uiState.update { currentState ->
+            currentState.copy(
+                convertFromUSDc = !currentState.convertFromUSDc
             )
         }
     }
