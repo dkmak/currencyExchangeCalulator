@@ -1,6 +1,7 @@
 package com.currencyexchangecalculator.ui
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.currencyexchangecalculator.R
 import com.currencyexchangecalculator.domain.Book
+import com.currencyexchangecalculator.domain.CurrencyModel
 import com.currencyexchangecalculator.presentation.HomeUiState
 import com.currencyexchangecalculator.presentation.HomeViewModel
 import com.currencyexchangecalculator.presentation.theme.CurrencyExchangeCalculatorTheme
@@ -57,11 +59,21 @@ fun CurrencyExchangeCalculatorScreen(
         ) {
             when (val dataState = uiState.dataState) {
                 is HomeUiState.HomeDataState.Failure -> {
-                    Row(modifier = Modifier.fillMaxWidth()) { Text(text = dataState.message) }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp)
+                    ) { Text(text = dataState.message) }
                 }
 
                 HomeUiState.HomeDataState.Loading -> {
-                    Row(modifier = Modifier.fillMaxWidth()) { CircularProgressIndicator() }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) { CircularProgressIndicator() }
                 }
 
                 is HomeUiState.HomeDataState.Success -> {
@@ -119,9 +131,9 @@ fun ExchangeCalculator(
             )
         )
         val subtitle = if (exchangeFromUSD) {
-            "1 USDc = ${trimZeros(book.ask)} MXN"
+            "${book.baseCurrency.label} = ${trimZeros(book.ask)} ${book.exchangeCurrency.label}"
         } else {
-            "1 USDc = ${trimZeros(book.bid)} MXN"
+            "${book.baseCurrency.code} = ${trimZeros(book.bid)} ${book.baseCurrency.code}"
         }
 
         Text(
@@ -141,7 +153,7 @@ fun ExchangeCalculator(
             ) {
                 if (exchangeFromUSD) {
                     CurrencyItem(
-                        label = "USDc",
+                        label = book.baseCurrency.label,
                         textFieldValue = usdTextField,
                         onCurrencyTextFieldChanged = onUsdTextFieldChanged,
                         onClick = {},
@@ -149,7 +161,7 @@ fun ExchangeCalculator(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     CurrencyItem(
-                        label = "MXN",
+                        label = book.exchangeCurrency.label,
                         textFieldValue = currencyTextField,
                         onCurrencyTextFieldChanged = onCurrencyTextFieldChanged,
                         onClick = {},
@@ -157,7 +169,7 @@ fun ExchangeCalculator(
                     )
                 } else {
                     CurrencyItem(
-                        label = "MXN",
+                        label = book.exchangeCurrency.label,
                         textFieldValue = currencyTextField,
                         onCurrencyTextFieldChanged = onCurrencyTextFieldChanged,
                         onClick = {},
@@ -165,7 +177,7 @@ fun ExchangeCalculator(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     CurrencyItem(
-                        label = "USDc",
+                        label = book.baseCurrency.label,
                         textFieldValue = usdTextField,
                         onCurrencyTextFieldChanged = onUsdTextFieldChanged,
                         onClick = {},
@@ -182,7 +194,7 @@ fun ExchangeCalculator(
             ) {
                 Icon(
                     painterResource(R.drawable.arrow_arq),
-                    contentDescription = "Swap Converstion",
+                    contentDescription = "Swap Conversion",
                     tint = Color.Unspecified
                 )
             }
@@ -272,7 +284,9 @@ private fun ExchangeCalculatorPreview() {
                 ask = "18.42",
                 bid = "18.31",
                 book = "mxn_usdc",
-                date = "2026-04-08"
+                date = "2026-04-08",
+                baseCurrency = CurrencyModel.USDC,
+                exchangeCurrency = CurrencyModel.MXN
             ),
             usdTextField = "1",
             currencyTextField = "18.42",

@@ -7,7 +7,7 @@ import javax.inject.Inject
 class ApiClient @Inject constructor(
     private val apiService: ApiService
 ) {
-    suspend fun getBooks(): List<BookDTO?> {
+    suspend fun getCurrency(code: String): List<BookDTO?> {
         return apiService.getCurrencies()
     }
 }

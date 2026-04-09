@@ -2,8 +2,9 @@ package com.currencyexchangecalculator.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.currencyexchangecalculator.data.CurrencyRepository
 import com.currencyexchangecalculator.domain.Book
+import com.currencyexchangecalculator.domain.CurrencyModel
+import com.currencyexchangecalculator.domain.CurrencyRepository
 import com.currencyexchangecalculator.domain.CurrencyResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,11 +37,11 @@ class HomeViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        updateCurrency()
+        updateCurrency(CurrencyModel.MXN)
     }
 
-    fun updateCurrency() {
-        repository.getCurrency()
+    fun updateCurrency(currency: CurrencyModel) {
+        repository.getCurrency(currency.code)
             .onEach { result ->
                 _uiState.update { currentState ->
                     val dataState = result.toDataState()
