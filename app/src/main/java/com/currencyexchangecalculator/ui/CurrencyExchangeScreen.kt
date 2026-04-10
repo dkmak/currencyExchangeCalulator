@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -159,9 +162,9 @@ fun ExchangeCalculator(
             )
         )
         val subtitle = if (exchangeFromUSD) {
-            "${book.baseCurrency.label} = ${trimZeros(book.ask)} ${book.exchangeCurrency.label}"
+            "1 ${book.baseCurrency.label} = ${trimZeros(book.ask)} ${book.exchangeCurrency.label}"
         } else {
-            "${book.baseCurrency.label} = ${trimZeros(book.bid)} ${book.exchangeCurrency.label}"
+            "1 ${book.baseCurrency.label} = ${trimZeros(book.bid)} ${book.exchangeCurrency.label}"
         }
 
         Text(
@@ -184,6 +187,7 @@ fun ExchangeCalculator(
                         label = book.baseCurrency.label,
                         textFieldValue = usdTextField,
                         iconResource = book.baseCurrency.toDrawableResource(),
+                        isClickable = false,
                         onCurrencyTextFieldChanged = onUsdTextFieldChanged,
                         onClick = {},
                         onClickTextField = onClickTextField
@@ -193,6 +197,7 @@ fun ExchangeCalculator(
                         label = book.exchangeCurrency.label,
                         textFieldValue = currencyTextField,
                         iconResource = book.exchangeCurrency.toDrawableResource(),
+                        isClickable = true,
                         onCurrencyTextFieldChanged = onCurrencyTextFieldChanged,
                         onClick = { onChangeCurrency() },
                         onClickTextField = onClickTextField,
@@ -202,6 +207,7 @@ fun ExchangeCalculator(
                         label = book.exchangeCurrency.label,
                         textFieldValue = currencyTextField,
                         iconResource = book.exchangeCurrency.toDrawableResource(),
+                        isClickable = true,
                         onCurrencyTextFieldChanged = onCurrencyTextFieldChanged,
                         onClick = { onChangeCurrency() },
                         onClickTextField = onClickTextField,
@@ -211,6 +217,7 @@ fun ExchangeCalculator(
                         label = book.baseCurrency.label,
                         textFieldValue = usdTextField,
                         iconResource = book.baseCurrency.toDrawableResource(),
+                        isClickable = false,
                         onCurrencyTextFieldChanged = onUsdTextFieldChanged,
                         onClick = {},
                         onClickTextField = onClickTextField
@@ -241,25 +248,33 @@ private fun CurrencyItem(
     textFieldValue: String,
     onCurrencyTextFieldChanged: (String) -> Unit,
     iconResource: Int,
+    isClickable: Boolean,
     onClick: () -> Unit,
     onClickTextField: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val itemModifier = if (isClickable){
+        Modifier
+            .clickable { onClick() }
+            .fillMaxWidth()
+            .padding(16.dp)
+    } else {
+        Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    }
+
     Card(
-        modifier = modifier
-            .height(66.dp)
-            .fillMaxWidth(),
+        modifier = modifier,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Row(
-            Modifier
-                .clickable { onClick() }
-                .fillMaxSize()
-                .padding(16.dp),
+            modifier = itemModifier,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             Icon(
                 painterResource(id = iconResource),
                 contentDescription = "",
@@ -269,8 +284,16 @@ private fun CurrencyItem(
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(horizontal = 4.dp)
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
+            if (isClickable){
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = "",
+                    modifier = Modifier.size(16.dp),
+                    tint = Color.Unspecified
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
             BasicTextField(
@@ -306,6 +329,7 @@ private fun CurrencyItemPreview() {
             label = "MXN",
             textFieldValue = "18.42",
             iconResource = R.drawable.mxn_flag,
+            isClickable = true,
             onCurrencyTextFieldChanged = {},
             onClickTextField = {},
             onClick = {},
@@ -345,7 +369,7 @@ private fun trimZeros(number: String): String? {
     return number.toBigDecimalOrNull()?.stripTrailingZeros()?.toPlainString()
 }
 
-private fun CurrencyModel.toDrawableResource(): Int {
+fun CurrencyModel.toDrawableResource(): Int {
     return when (this){
         CurrencyModel.ARS -> R.drawable.ars_flag
         CurrencyModel.BRL -> R.drawable.brl_flag
