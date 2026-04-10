@@ -46,7 +46,7 @@ fun CurrencyExchangeBottomSheet(
     onNewCurrencySelected: (Currency) -> Unit,
     sheetState: SheetState
 ) {
-    val coroutineScope = rememberCoroutineScope() // move this out later
+    val coroutineScope = rememberCoroutineScope()
     val (selectedCurrency, onOptionSelected) = remember { mutableStateOf(selected) }
     ModalBottomSheet(
         sheetState = sheetState,

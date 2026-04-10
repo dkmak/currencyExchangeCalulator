@@ -53,7 +53,7 @@ class HomeViewModel @Inject constructor(
         repository.getCurrency(currency.code)
             .onEach { result ->
                 _uiState.update { currentState ->
-                    val dataState = result.toAvailableCurrenciesState()
+                    val dataState = result.toDataState()
                     if (dataState is HomeUiState.CurrencyDataState.Success){
                         val book = dataState.book
                         val rate = if (currentState.exchangeFromUSDc) book.ask else {
@@ -153,7 +153,7 @@ class HomeViewModel @Inject constructor(
             .orEmpty()
     }
 
-    private fun CurrencyResult.toAvailableCurrenciesState(): HomeUiState.CurrencyDataState {
+    private fun CurrencyResult.toDataState(): HomeUiState.CurrencyDataState {
         return when (this) {
             is CurrencyResult.CurrencySuccess -> HomeUiState.CurrencyDataState.Success(
                 book = this.book

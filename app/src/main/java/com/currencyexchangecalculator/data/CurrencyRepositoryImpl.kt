@@ -13,15 +13,18 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 import javax.inject.Singleton
 
 class CurrencyRepositoryImpl @Inject constructor(
-    private val apiClient: ApiClient
-    // add dispatcher later
+    private val apiClient: ApiClient,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): CurrencyRepository {
     override fun getCurrency(code: String): Flow<CurrencyResult> = flow<CurrencyResult> {
         val response: List<BookDTO?> = apiClient.getCurrency(code)
@@ -34,7 +37,7 @@ class CurrencyRepositoryImpl @Inject constructor(
             throw throwable
         }
         emit(throwable.toCurrencyDomainError())
-    }
+    }.flowOn(ioDispatcher)
 
     override fun getCurrencies(): Flow<CurrenciesResult> = flow<CurrenciesResult> {
         val response  = apiClient.getCurrencies()
@@ -47,7 +50,7 @@ class CurrencyRepositoryImpl @Inject constructor(
             throw throwable
         }
         emit(throwable.toCurrenciesDomainError())
-    }
+    }.flowOn(ioDispatcher)
 }
 
 @Module
