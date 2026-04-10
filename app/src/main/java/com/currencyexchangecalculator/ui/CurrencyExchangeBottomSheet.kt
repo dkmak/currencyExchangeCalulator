@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.R
 import com.currencyexchangecalculator.domain.CurrencyModel
 import com.currencyexchangecalculator.presentation.HomeUiState.AvailableCurrenciesState
 import com.currencyexchangecalculator.presentation.theme.CurrencyExchangeCalculatorTheme
@@ -120,7 +121,7 @@ fun CurrencyExchangeBottomSheet(
                                 modifier = Modifier.padding(horizontal = 8.dp)
                             )
                             Spacer(Modifier.weight(1f))
-                            RadioButton(
+                            CustomRadioButton(
                                 selected = (currencyModel == selectedCurrency),
                                 onClick = null
                             )

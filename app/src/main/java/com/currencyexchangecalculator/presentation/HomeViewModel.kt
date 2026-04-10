@@ -46,7 +46,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         getCurrencies()
-        updateCurrency(CurrencyModel.MXN)
+        updateCurrency(DEFAULT_START_EXCHANGE_CURRENCY)
     }
 
     fun updateCurrency(currency: CurrencyModel) {
@@ -59,11 +59,10 @@ class HomeViewModel @Inject constructor(
                         val rate = if (currentState.exchangeFromUSDc) book.ask else {
                             book.bid
                         }
-                        val start = "1"
                         currentState.copy(
                             dataState = dataState,
-                            usdcTextField = "1",
-                            currencyTextField = convertUsdcToCurrency(rate, start)
+                            usdcTextField = DEFAULT_BASE_CURRENCY_VALUE,
+                            currencyTextField = convertUsdcToCurrency(rate, DEFAULT_BASE_CURRENCY_VALUE)
                         )
                     } else {
                         currentState.copy(
@@ -196,5 +195,10 @@ class HomeViewModel @Inject constructor(
         if (parts.any { part -> part.any { !it.isDigit() } }) return false
 
         return parts.size == 1 || parts[1].length <= 2
+    }
+
+    companion object {
+        const val DEFAULT_BASE_CURRENCY_VALUE = "1"
+        val DEFAULT_START_EXCHANGE_CURRENCY = CurrencyModel.MXN
     }
 }
