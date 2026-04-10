@@ -53,7 +53,7 @@ class HomeViewModel @Inject constructor(
         repository.getCurrency(currency.code)
             .onEach { result ->
                 _uiState.update { currentState ->
-                    val dataState = result.toDataState()
+                    val dataState = result.toCurrencyDataState()
                     if (dataState is HomeUiState.CurrencyDataState.Success){
                         val book = dataState.book
                         val rate = if (currentState.exchangeFromUSDc) book.ask else {
@@ -111,7 +111,10 @@ class HomeViewModel @Inject constructor(
             _uiState.update { currentState ->
                 val book = (currentState.dataState as? HomeUiState.CurrencyDataState.Success)?.book
                 val convertCurrency = if (book != null && value.isNotEmpty()) {
-                    convertCurrencyToUsdc(book.ask, value)
+                    val rate = if (currentState.exchangeFromUSDc) book.ask else {
+                        book.bid
+                    }
+                    convertCurrencyToUsdc(rate, value)
                 } else {
                     ""
                 }
@@ -134,9 +137,27 @@ class HomeViewModel @Inject constructor(
 
     fun updateConvertFromUSDc(){
         _uiState.update { currentState ->
-            currentState.copy(
-                exchangeFromUSDc = !currentState.exchangeFromUSDc
-            )
+            val newExchangeFromUSDc = !currentState.exchangeFromUSDc
+            val book = (currentState.dataState as? HomeUiState.CurrencyDataState.Success)?.book
+            if (book != null){
+                if (newExchangeFromUSDc) {
+                    val newCurrency  = convertUsdcToCurrency(book.ask, currentState.usdcTextField)
+                    currentState.copy(
+                        exchangeFromUSDc = newExchangeFromUSDc,
+                        currencyTextField = newCurrency
+                    )
+                } else {
+                    val newUsd = convertCurrencyToUsdc(book.bid, currentState.currencyTextField)
+                    currentState.copy(
+                        exchangeFromUSDc = newExchangeFromUSDc,
+                        usdcTextField = newUsd
+                    )
+                }
+            } else {
+                currentState.copy(
+                    exchangeFromUSDc = newExchangeFromUSDc
+                )
+            }
         }
     }
 
@@ -153,7 +174,7 @@ class HomeViewModel @Inject constructor(
             .orEmpty()
     }
 
-    private fun CurrencyResult.toDataState(): HomeUiState.CurrencyDataState {
+    private fun CurrencyResult.toCurrencyDataState(): HomeUiState.CurrencyDataState {
         return when (this) {
             is CurrencyResult.CurrencySuccess -> HomeUiState.CurrencyDataState.Success(
                 book = this.book
