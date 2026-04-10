@@ -1,60 +1,56 @@
-# **Android App Template** - Darryl Mak
+# **Currency Exchange Calculator** - Darryl Mak
 
 (Description):
-1. **Action 1** - *Action 1*
-2. **Action 2** - *Action 2*
+1. **Convert between currencies** - *Calculate conversions between USDc and a selected currency using live ask/bid market rates.*
+2. **Change quote currency** - *Pick from supported currencies in a bottom sheet and update the calculator with the selected market.*
 
 (insert visuals, video)
 
 
 ### Setup Instructions
 #### Prerequisites
-- Android Studio:
-- Java/JDK Version:
+- Android Studio: Recent version with Jetpack Compose support
+- Java/JDK Version: 11
 - •Android SDK
-    - Compile SDK:  
-    - Minimum SDK:  
-- Gradle Version: 
+    - Compile SDK: 36
+    - Minimum SDK: 24
+- Gradle Version: Android Gradle Plugin 8.13.1
 
 #### Open & Run Project
-1. Unzip the project
-2. Open Android Studio
-3. Select "Open" and choose the root project directory
-4. Let Gradle sync complete
-5. run unit tests with `./gradlew clean testDebugUnitTest`
+1. Open Android Studio
+2. Select "Open" and choose the root project directory
+3. Let Gradle sync complete
+4. Run the `app` configuration on an emulator or Android device
+5. run unit tests with `./gradlew testDebugUnitTest`
 
 ## Technical Details
 
 ### Architecture
 **MVVM** architecture
-- Clear separation of concerns between UI, domain, and data layers
+- Clear separation of concerns between UI, domain, presentation, and data layers
 
 ### UI
 - **Jetpack Compose**
-- Proper loading, error, and empty states
+- Main exchange calculator screen with bid/ask-based conversion
+- Bottom sheet currency picker
+- Proper loading and error states
 
 ### Networking
-- Integrate with [API](**insert api here**)
+- Integrate with [DolarApp API](https://api.dolarapp.dev/)
 - Handle network errors gracefully.
 - Proper error messages for the user.
 
-### Modularization
-- Maintain proper dependency direction
-- Keep modules focused and single-purpose.
 
 ### Testing
-- Includes unit tests for ViewModels and Repositories
-
-### Build Configuration
-- Debug and release build types are configured
-- ProGuard/R8 is enabled for release builds
+- Project is configured for unit and instrumentation tests
+- No committed test files yet
 
 ---
 
 ## API Reference
-**Base URL:** `insert base url`
+**Base URL:** `https://api.dolarapp.dev/`
 
-| Endpoint                     | Description | Example |
-|------------------------------|---------|--------|
-| `ex1`                        | | N/A |
-| `ex2`                        | |  |
+| Endpoint                               | Description | Example |
+|----------------------------------------|---------|--------|
+| `GET /v1/tickers?currencies=MXN`       | Fetch ticker/book data for a selected currency | `https://api.dolarapp.dev/v1/tickers?currencies=MXN` |
+| (PENDING) `GET /v1/tickers-currencies` | Returns available currencies. Declared in the API interface, though the current client uses a hardcoded list | `https://api.dolarapp.dev/v1/tickers-currencies` |
