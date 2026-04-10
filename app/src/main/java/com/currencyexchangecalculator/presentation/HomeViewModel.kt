@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.currencyexchangecalculator.domain.Book
 import com.currencyexchangecalculator.domain.CurrenciesResult
-import com.currencyexchangecalculator.domain.CurrencyModel
+import com.currencyexchangecalculator.domain.Currency
 import com.currencyexchangecalculator.domain.CurrencyRepository
 import com.currencyexchangecalculator.domain.CurrencyResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +32,7 @@ data class HomeUiState(
 
     sealed interface AvailableCurrenciesState {
         data object Loading : AvailableCurrenciesState
-        data class Success(val currencies: List<CurrencyModel>) : AvailableCurrenciesState
+        data class Success(val currencies: List<Currency>) : AvailableCurrenciesState
         data class Failure(val message: String) : AvailableCurrenciesState
     }
 }
@@ -49,7 +49,7 @@ class HomeViewModel @Inject constructor(
         updateCurrency(DEFAULT_START_EXCHANGE_CURRENCY)
     }
 
-    fun updateCurrency(currency: CurrencyModel) {
+    fun updateCurrency(currency: Currency) {
         repository.getCurrency(currency.code)
             .onEach { result ->
                 _uiState.update { currentState ->
@@ -199,6 +199,6 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         const val DEFAULT_BASE_CURRENCY_VALUE = "1"
-        val DEFAULT_START_EXCHANGE_CURRENCY = CurrencyModel.MXN
+        val DEFAULT_START_EXCHANGE_CURRENCY = Currency.MXN
     }
 }

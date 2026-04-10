@@ -1,7 +1,7 @@
 package com.currencyexchangecalculator.data.dto
 
 import com.currencyexchangecalculator.domain.Book
-import com.currencyexchangecalculator.domain.CurrencyModel
+import com.currencyexchangecalculator.domain.Currency
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -24,12 +24,12 @@ fun BookDTO.toDomain(): Book {
     )
 }
 
-private fun parseBookForCurrency (book: String): Pair<CurrencyModel, CurrencyModel> {
+private fun parseBookForCurrency (book: String): Pair<Currency, Currency> {
     val bookParts = book.split("_")
 
     if (bookParts.size != 2) { // throw an error instead?
-        return (CurrencyModel.Unknown(label = "Unknown Code", code = book) to
-                CurrencyModel.Unknown(label ="Unknown Code",code = book))
+        return (Currency.Unknown(label = "Unknown Code", code = book) to
+                Currency.Unknown(label ="Unknown Code",code = book))
     }
 
     val baseCurrency = bookParts[0].toCurrencyModel()
@@ -37,14 +37,14 @@ private fun parseBookForCurrency (book: String): Pair<CurrencyModel, CurrencyMod
     return (baseCurrency to exchangeCurrency)
 }
 
-fun String.toCurrencyModel(): CurrencyModel {
+fun String.toCurrencyModel(): Currency {
     return when (uppercase()){
-        "USDC" -> CurrencyModel.USDC
-        "MXN" -> CurrencyModel.MXN
-        "ARS" -> CurrencyModel.ARS
-        "EURC" -> CurrencyModel.EURC
-        "BRL" -> CurrencyModel.BRL
-        "COP" -> CurrencyModel.COP
-        else -> CurrencyModel.Unknown(label ="Unknown Code", code = this)
+        "USDC" -> Currency.USDC
+        "MXN" -> Currency.MXN
+        "ARS" -> Currency.ARS
+        "EURC" -> Currency.EURC
+        "BRL" -> Currency.BRL
+        "COP" -> Currency.COP
+        else -> Currency.Unknown(label ="Unknown Code", code = this)
     }
 }

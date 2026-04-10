@@ -18,7 +18,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -33,8 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.R
-import com.currencyexchangecalculator.domain.CurrencyModel
+import com.currencyexchangecalculator.domain.Currency
 import com.currencyexchangecalculator.presentation.HomeUiState.AvailableCurrenciesState
 import com.currencyexchangecalculator.presentation.theme.CurrencyExchangeCalculatorTheme
 import kotlinx.coroutines.launch
@@ -44,8 +42,8 @@ import kotlinx.coroutines.launch
 fun CurrencyExchangeBottomSheet(
     onDismissRequest: () -> Unit,
     state: AvailableCurrenciesState,
-    selected: CurrencyModel,
-    onNewCurrencySelected: (CurrencyModel) -> Unit,
+    selected: Currency,
+    onNewCurrencySelected: (Currency) -> Unit,
     sheetState: SheetState
 ) {
     val coroutineScope = rememberCoroutineScope() // move this out later
@@ -140,15 +138,15 @@ private fun CurrencyExchangeBottomSheetPreview() {
     CurrencyExchangeCalculatorTheme {
         CurrencyExchangeBottomSheet(
             onDismissRequest = {},
-            selected = CurrencyModel.MXN,
+            selected = Currency.MXN,
             onNewCurrencySelected = {},
             state = AvailableCurrenciesState.Success(
                 currencies = listOf(
-                    CurrencyModel.MXN,
-                    CurrencyModel.ARS,
-                    CurrencyModel.BRL,
-                    CurrencyModel.COP,
-                    CurrencyModel.EURC,
+                    Currency.MXN,
+                    Currency.ARS,
+                    Currency.BRL,
+                    Currency.COP,
+                    Currency.EURC,
                 )
             ),
             sheetState = rememberModalBottomSheetState()

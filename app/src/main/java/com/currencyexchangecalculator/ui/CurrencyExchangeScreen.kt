@@ -13,11 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -49,7 +47,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.currencyexchangecalculator.R
 import com.currencyexchangecalculator.domain.Book
-import com.currencyexchangecalculator.domain.CurrencyModel
+import com.currencyexchangecalculator.domain.Currency
 import com.currencyexchangecalculator.presentation.HomeUiState
 import com.currencyexchangecalculator.presentation.HomeViewModel
 import com.currencyexchangecalculator.presentation.theme.CurrencyExchangeCalculatorTheme
@@ -347,8 +345,8 @@ private fun ExchangeCalculatorPreview() {
                 ask = "18.42",
                 bid = "18.31",
                 date = "2026-04-08",
-                baseCurrency = CurrencyModel.USDC,
-                exchangeCurrency = CurrencyModel.MXN
+                baseCurrency = Currency.USDC,
+                exchangeCurrency = Currency.MXN
             ),
             usdTextField = "1",
             currencyTextField = "18.42",
@@ -369,14 +367,14 @@ private fun trimZeros(number: String): String? {
     return number.toBigDecimalOrNull()?.stripTrailingZeros()?.toPlainString()
 }
 
-fun CurrencyModel.toDrawableResource(): Int {
+fun Currency.toDrawableResource(): Int {
     return when (this){
-        CurrencyModel.ARS -> R.drawable.ars_flag
-        CurrencyModel.BRL -> R.drawable.brl_flag
-        CurrencyModel.COP -> R.drawable.cop_flag
-        CurrencyModel.EURC -> R.drawable.eurc_flag
-        CurrencyModel.MXN -> R.drawable.mxn_flag
-        CurrencyModel.USDC -> R.drawable.usdc_flag
-        is CurrencyModel.Unknown -> R.drawable.ic_launcher_foreground
+        Currency.ARS -> R.drawable.ars_flag
+        Currency.BRL -> R.drawable.brl_flag
+        Currency.COP -> R.drawable.cop_flag
+        Currency.EURC -> R.drawable.eurc_flag
+        Currency.MXN -> R.drawable.mxn_flag
+        Currency.USDC -> R.drawable.usdc_flag
+        is Currency.Unknown -> R.drawable.ic_launcher_foreground
     }
 }

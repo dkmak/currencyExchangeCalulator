@@ -11,7 +11,7 @@ sealed interface CurrencyResult {
 }
 
 sealed interface CurrenciesResult {
-    data class CurrenciesSuccess(val currencies: List<CurrencyModel>): CurrenciesResult
+    data class CurrenciesSuccess(val currencies: List<Currency>): CurrenciesResult
 
     sealed interface CurrenciesError: CurrenciesResult {
         data object Network : CurrenciesError
