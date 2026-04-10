@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.BasicTextField
@@ -18,12 +19,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,13 +52,15 @@ import com.currencyexchangecalculator.presentation.HomeViewModel
 import com.currencyexchangecalculator.presentation.theme.CurrencyExchangeCalculatorTheme
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CurrencyExchangeCalculatorScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var showBottomSheet by remember { mutableStateOf(false) }
 
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
             modifier = Modifier
@@ -112,10 +117,19 @@ fun CurrencyExchangeCalculatorScreen(
                             )
                             .fillMaxWidth()
                     )
+
                     if (showBottomSheet) {
                         CurrencyExchangeBottomSheet(
+                            sheetState = sheetState,
                             state = uiState.availableCurrenciesState,
-                            onDismissRequest = { showBottomSheet = false }
+                            selected = dataState.book.exchangeCurrency,
+                            onNewCurrencySelected = { currencyModel ->
+                                viewModel.updateCurrency(currencyModel)
+                            },
+                            onDismissRequest = {
+                                println("Bottom sheet dismissed")
+                                showBottomSheet = false
+                            }
                         )
                     }
                 }
@@ -169,6 +183,7 @@ fun ExchangeCalculator(
                     CurrencyItem(
                         label = book.baseCurrency.label,
                         textFieldValue = usdTextField,
+                        iconResource = book.baseCurrency.toDrawableResource(),
                         onCurrencyTextFieldChanged = onUsdTextFieldChanged,
                         onClick = {},
                         onClickTextField = onClickTextField
@@ -177,6 +192,7 @@ fun ExchangeCalculator(
                     CurrencyItem(
                         label = book.exchangeCurrency.label,
                         textFieldValue = currencyTextField,
+                        iconResource = book.exchangeCurrency.toDrawableResource(),
                         onCurrencyTextFieldChanged = onCurrencyTextFieldChanged,
                         onClick = { onChangeCurrency() },
                         onClickTextField = onClickTextField,
@@ -185,6 +201,7 @@ fun ExchangeCalculator(
                     CurrencyItem(
                         label = book.exchangeCurrency.label,
                         textFieldValue = currencyTextField,
+                        iconResource = book.exchangeCurrency.toDrawableResource(),
                         onCurrencyTextFieldChanged = onCurrencyTextFieldChanged,
                         onClick = { onChangeCurrency() },
                         onClickTextField = onClickTextField,
@@ -193,6 +210,7 @@ fun ExchangeCalculator(
                     CurrencyItem(
                         label = book.baseCurrency.label,
                         textFieldValue = usdTextField,
+                        iconResource = book.baseCurrency.toDrawableResource(),
                         onCurrencyTextFieldChanged = onUsdTextFieldChanged,
                         onClick = {},
                         onClickTextField = onClickTextField
@@ -207,9 +225,10 @@ fun ExchangeCalculator(
 
             ) {
                 Icon(
-                    painterResource(R.drawable.arrow_arq),
+                    painterResource(R.drawable.arrow),
                     contentDescription = "Swap Conversion",
-                    tint = Color.Unspecified
+                    modifier = Modifier.size(36.dp),
+                    tint = Color.Unspecified,
                 )
             }
         }
@@ -221,6 +240,7 @@ private fun CurrencyItem(
     label: String,
     textFieldValue: String,
     onCurrencyTextFieldChanged: (String) -> Unit,
+    iconResource: Int,
     onClick: () -> Unit,
     onClickTextField: () -> Unit,
     modifier: Modifier = Modifier
@@ -228,21 +248,28 @@ private fun CurrencyItem(
     Card(
         modifier = modifier
             .height(66.dp)
-            .fillMaxWidth()
-            .clickable { onClick() },
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Row(
             Modifier
+                .clickable { onClick() }
                 .fillMaxSize()
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Icon(
+                painterResource(id = iconResource),
+                contentDescription = "",
+                modifier = Modifier.size(16.dp),
+                tint = Color.Unspecified
+            )
             Text(
                 text = label,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(horizontal = 4.dp)
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -278,6 +305,7 @@ private fun CurrencyItemPreview() {
         CurrencyItem(
             label = "MXN",
             textFieldValue = "18.42",
+            iconResource = R.drawable.mxn_flag,
             onCurrencyTextFieldChanged = {},
             onClickTextField = {},
             onClick = {},
@@ -315,4 +343,16 @@ private fun ExchangeCalculatorPreview() {
 
 private fun trimZeros(number: String): String? {
     return number.toBigDecimalOrNull()?.stripTrailingZeros()?.toPlainString()
+}
+
+private fun CurrencyModel.toDrawableResource(): Int {
+    return when (this){
+        CurrencyModel.ARS -> R.drawable.ars_flag
+        CurrencyModel.BRL -> R.drawable.brl_flag
+        CurrencyModel.COP -> R.drawable.cop_flag
+        CurrencyModel.EURC -> R.drawable.eurc_flag
+        CurrencyModel.MXN -> R.drawable.mxn_flag
+        CurrencyModel.USDC -> R.drawable.usdc_flag
+        is CurrencyModel.Unknown -> R.drawable.ic_launcher_foreground
+    }
 }
