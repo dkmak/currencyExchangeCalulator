@@ -63,7 +63,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "1",
-                    currencyTextField = "17.31",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -96,7 +96,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "1",
-                    currencyTextField = "17.31",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -142,7 +142,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "1",
-                    currencyTextField = "17.31",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -188,7 +188,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "1",
-                    currencyTextField = "17.31",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -213,7 +213,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "1",
-                    currencyTextField = "17.31",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -246,7 +246,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "1",
-                    currencyTextField = "17.31",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -271,7 +271,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "1",
-                    currencyTextField = "17.31",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -283,7 +283,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "12",
-                    currencyTextField = "207.69",
+                    currencyTextField = "207.63",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -316,7 +316,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "1",
-                    currencyTextField = "17.31",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -329,7 +329,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "1.23",
-                    currencyTextField = "21.29",
+                    currencyTextField = "21.28",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -362,7 +362,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "1",
-                    currencyTextField = "17.31",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -398,7 +398,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "1",
-                    currencyTextField = "17.31",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -434,7 +434,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "1",
-                    currencyTextField = "17.31",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -447,7 +447,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = false,
                     usdcTextField = "1.00",
-                    currencyTextField = "17.31",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -459,7 +459,7 @@ class HomeViewModelTests {
                 HomeUiState(
                     exchangeFromUSDc = true,
                     usdcTextField = "1.00",
-                    currencyTextField = "17.31",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),

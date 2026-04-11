@@ -160,9 +160,9 @@ fun ExchangeCalculator(
             )
         )
         val subtitle = if (exchangeFromUSD) {
-            "1 ${book.baseCurrency.label} = ${trimZeros(book.ask)} ${book.exchangeCurrency.label}"
-        } else {
             "1 ${book.baseCurrency.label} = ${trimZeros(book.bid)} ${book.exchangeCurrency.label}"
+        } else {
+            "1 ${book.baseCurrency.label} = ${trimZeros(book.ask)} ${book.exchangeCurrency.label}"
         }
 
         Text(

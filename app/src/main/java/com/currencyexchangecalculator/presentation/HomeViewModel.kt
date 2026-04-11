@@ -56,8 +56,8 @@ class HomeViewModel @Inject constructor(
                     val dataState = result.toCurrencyDataState()
                     if (dataState is HomeUiState.CurrencyDataState.Success){
                         val book = dataState.book
-                        val rate = if (currentState.exchangeFromUSDc) book.ask else {
-                            book.bid
+                        val rate = if (currentState.exchangeFromUSDc) book.bid else {
+                            book.ask
                         }
                         currentState.copy(
                             dataState = dataState,
@@ -91,8 +91,8 @@ class HomeViewModel @Inject constructor(
             _uiState.update { currentState ->
                 val book = (currentState.dataState as? HomeUiState.CurrencyDataState.Success)?.book
                 val convertCurrency = if (book != null && value.isNotEmpty()) {
-                    val rate = if (currentState.exchangeFromUSDc) book.ask else {
-                        book.bid
+                    val rate = if (currentState.exchangeFromUSDc) book.bid else {
+                        book.ask
                     }
                     convertUsdcToCurrency(rate, value)
                 } else {
@@ -141,13 +141,13 @@ class HomeViewModel @Inject constructor(
             val book = (currentState.dataState as? HomeUiState.CurrencyDataState.Success)?.book
             if (book != null){
                 if (newExchangeFromUSDc) {
-                    val newCurrency  = convertUsdcToCurrency(book.ask, currentState.usdcTextField)
+                    val newCurrency  = convertUsdcToCurrency(book.bid, currentState.usdcTextField)
                     currentState.copy(
                         exchangeFromUSDc = newExchangeFromUSDc,
                         currencyTextField = newCurrency
                     )
                 } else {
-                    val newUsd = convertCurrencyToUsdc(book.bid, currentState.currencyTextField)
+                    val newUsd = convertCurrencyToUsdc(book.ask, currentState.currencyTextField)
                     currentState.copy(
                         exchangeFromUSDc = newExchangeFromUSDc,
                         usdcTextField = newUsd
