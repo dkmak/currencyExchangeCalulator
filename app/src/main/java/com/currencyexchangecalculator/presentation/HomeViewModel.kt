@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 
 data class HomeUiState(
-    val exchangeFromUSDc: Boolean = true, // rememberSavable
+    val exchangeFromUSDc: Boolean = true,
     val usdcTextField: String = "",
     val currencyTextField: String = "",
     val dataState: CurrencyDataState = CurrencyDataState.Loading,
@@ -139,20 +139,20 @@ class HomeViewModel @Inject constructor(
         _uiState.update { currentState ->
             val newExchangeFromUSDc = !currentState.exchangeFromUSDc
             val book = (currentState.dataState as? HomeUiState.CurrencyDataState.Success)?.book
-            if (book != null){
-                if (newExchangeFromUSDc) {
-                    val newCurrency  = convertUsdcToCurrency(book.bid, currentState.usdcTextField)
-                    currentState.copy(
-                        exchangeFromUSDc = newExchangeFromUSDc,
-                        currencyTextField = newCurrency
-                    )
+
+            if (book != null) {
+                val usdcValue = currentState.usdcTextField
+                val recalculatedCurrencyValue = if (usdcValue.isNotEmpty()) {
+                    val rate = if (newExchangeFromUSDc) book.bid else book.ask
+                    convertUsdcToCurrency(rate, usdcValue)
                 } else {
-                    val newUsd = convertCurrencyToUsdc(book.ask, currentState.currencyTextField)
-                    currentState.copy(
-                        exchangeFromUSDc = newExchangeFromUSDc,
-                        usdcTextField = newUsd
-                    )
+                    ""
                 }
+
+                currentState.copy(
+                    exchangeFromUSDc = newExchangeFromUSDc,
+                    currencyTextField = recalculatedCurrencyValue
+                )
             } else {
                 currentState.copy(
                     exchangeFromUSDc = newExchangeFromUSDc
