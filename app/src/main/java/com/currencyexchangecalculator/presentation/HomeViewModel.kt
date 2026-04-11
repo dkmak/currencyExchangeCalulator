@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 
 data class HomeUiState(
-    val exchangeFromUSDc: Boolean = true,
+    val isUsdCToSelectedCurrency: Boolean = true,
     val usdcTextField: String = "",
     val currencyTextField: String = "",
     val dataState: CurrencyDataState = CurrencyDataState.Loading,
@@ -56,7 +56,7 @@ class HomeViewModel @Inject constructor(
                     val dataState = result.toCurrencyDataState()
                     if (dataState is HomeUiState.CurrencyDataState.Success){
                         val book = dataState.book
-                        val rate = if (currentState.exchangeFromUSDc) book.bid else {
+                        val rate = if (currentState.isUsdCToSelectedCurrency) book.bid else {
                             book.ask
                         }
                         currentState.copy(
@@ -91,7 +91,7 @@ class HomeViewModel @Inject constructor(
             _uiState.update { currentState ->
                 val book = (currentState.dataState as? HomeUiState.CurrencyDataState.Success)?.book
                 val convertCurrency = if (book != null && value.isNotEmpty()) {
-                    val rate = if (currentState.exchangeFromUSDc) book.bid else {
+                    val rate = if (currentState.isUsdCToSelectedCurrency) book.bid else {
                         book.ask
                     }
                     convertUsdcToCurrency(rate, value)
@@ -111,7 +111,7 @@ class HomeViewModel @Inject constructor(
             _uiState.update { currentState ->
                 val book = (currentState.dataState as? HomeUiState.CurrencyDataState.Success)?.book
                 val convertCurrency = if (book != null && value.isNotEmpty()) {
-                    val rate = if (currentState.exchangeFromUSDc) book.ask else {
+                    val rate = if (currentState.isUsdCToSelectedCurrency) book.ask else {
                         book.bid
                     }
                     convertCurrencyToUsdc(rate, value)
@@ -137,7 +137,7 @@ class HomeViewModel @Inject constructor(
 
     fun updateConvertFromUSDc(){
         _uiState.update { currentState ->
-            val newExchangeFromUSDc = !currentState.exchangeFromUSDc
+            val newExchangeFromUSDc = !currentState.isUsdCToSelectedCurrency
             val book = (currentState.dataState as? HomeUiState.CurrencyDataState.Success)?.book
 
             if (book != null) {
@@ -150,12 +150,12 @@ class HomeViewModel @Inject constructor(
                 }
 
                 currentState.copy(
-                    exchangeFromUSDc = newExchangeFromUSDc,
+                    isUsdCToSelectedCurrency = newExchangeFromUSDc,
                     currencyTextField = recalculatedCurrencyValue
                 )
             } else {
                 currentState.copy(
-                    exchangeFromUSDc = newExchangeFromUSDc
+                    isUsdCToSelectedCurrency = newExchangeFromUSDc
                 )
             }
         }

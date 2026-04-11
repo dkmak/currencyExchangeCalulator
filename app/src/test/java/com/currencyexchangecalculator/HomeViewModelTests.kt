@@ -51,7 +51,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "",
                     currencyTextField = "",
                     dataState = HomeUiState.CurrencyDataState.Loading,
@@ -61,7 +61,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -94,7 +94,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -107,7 +107,7 @@ class HomeViewModelTests {
             homeViewModel.onUsdTextFieldChanged("")
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "",
                     currencyTextField = "",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -140,7 +140,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -153,7 +153,7 @@ class HomeViewModelTests {
             homeViewModel.onCurrencyTextFieldChanged("")
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "",
                     currencyTextField = "",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -186,7 +186,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -199,7 +199,7 @@ class HomeViewModelTests {
             homeViewModel.onUsdTextFieldChanged("")
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "",
                     currencyTextField = "",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -211,7 +211,7 @@ class HomeViewModelTests {
             homeViewModel.onUsdTextFieldChanged("1")
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -244,7 +244,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -257,7 +257,7 @@ class HomeViewModelTests {
             homeViewModel.onUsdTextFieldChanged("")
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "",
                     currencyTextField = "",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -269,7 +269,7 @@ class HomeViewModelTests {
             homeViewModel.onUsdTextFieldChanged("1")
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -281,7 +281,7 @@ class HomeViewModelTests {
             homeViewModel.onUsdTextFieldChanged("12")
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "12",
                     currencyTextField = "207.63",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -314,7 +314,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -327,7 +327,7 @@ class HomeViewModelTests {
             homeViewModel.onUsdTextFieldChanged("1.23")
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1.23",
                     currencyTextField = "21.28",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -360,7 +360,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -396,7 +396,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -432,7 +432,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -445,7 +445,7 @@ class HomeViewModelTests {
             homeViewModel.updateConvertFromUSDc()
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = false,
+                    isUsdCToSelectedCurrency = false,
                     usdcTextField = "1",
                     currencyTextField = "17.31",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -457,7 +457,7 @@ class HomeViewModelTests {
             homeViewModel.updateConvertFromUSDc()
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -488,7 +488,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "",
                     currencyTextField = "",
                     dataState = HomeUiState.CurrencyDataState.Loading,
@@ -498,7 +498,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "",
                     currencyTextField = "",
                     dataState = HomeUiState.CurrencyDataState.Failure(
@@ -529,7 +529,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "",
                     currencyTextField = "",
                     dataState = HomeUiState.CurrencyDataState.Loading,
@@ -541,7 +541,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
@@ -576,7 +576,7 @@ class HomeViewModelTests {
 
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
-                    exchangeFromUSDc = true,
+                    isUsdCToSelectedCurrency = true,
                     usdcTextField = "1",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
