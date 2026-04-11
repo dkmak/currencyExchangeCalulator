@@ -472,23 +472,124 @@ class HomeViewModelTests {
 
     @Test
     fun `exception currency quote failure updates dataState with failure`() = runTest {
-        // Given a repository that returns a currency quote failure
-        // When updateCurrency is invoked or the HomeViewModel is created
-        // Then the dataState should be updated to a failure state with the mapped user message
+        val expectedCurrencies = baseCurrencies
+
+        currencyRepository = FakeCurrencyRepository().apply{
+            currencyResult = CurrencyResult.CurrencyError.Network
+            currenciesResult = CurrenciesResult.CurrenciesSuccess(expectedCurrencies)
+        }
+
+        homeViewModel = HomeViewModel(
+            repository = currencyRepository
+        )
+
+        homeViewModel.uiState.test {
+            assertThat(awaitItem()).isEqualTo(HomeUiState())
+
+            assertThat(awaitItem()).isEqualTo(
+                HomeUiState(
+                    exchangeFromUSDc = true,
+                    usdcTextField = "",
+                    currencyTextField = "",
+                    dataState = HomeUiState.CurrencyDataState.Loading,
+                    availableCurrenciesState = HomeUiState.AvailableCurrenciesState.Success(expectedCurrencies)
+                )
+            )
+
+            assertThat(awaitItem()).isEqualTo(
+                HomeUiState(
+                    exchangeFromUSDc = true,
+                    usdcTextField = "",
+                    currencyTextField = "",
+                    dataState = HomeUiState.CurrencyDataState.Failure(
+                        "Please check your internet connection and try again."
+                    ),
+                    availableCurrenciesState = HomeUiState.AvailableCurrenciesState.Success(expectedCurrencies)
+                )
+            )
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
     fun `exception available currencies failure updates availableCurrenciesState with failure`() = runTest {
-        // Given a repository that returns a currencies list failure
-        // When getCurrencies runs during HomeViewModel initialization
-        // Then the availableCurrenciesState should be updated to a failure state with the mapped user message
+        val expectedBook = baseBook
+
+        currencyRepository = FakeCurrencyRepository().apply{
+            currencyResult = CurrencyResult.CurrencySuccess(expectedBook)
+            currenciesResult = CurrenciesResult.CurrenciesError.Network
+        }
+
+        homeViewModel = HomeViewModel(
+            repository = currencyRepository
+        )
+
+        homeViewModel.uiState.test {
+            assertThat(awaitItem()).isEqualTo(HomeUiState())
+
+            assertThat(awaitItem()).isEqualTo(
+                HomeUiState(
+                    exchangeFromUSDc = true,
+                    usdcTextField = "",
+                    currencyTextField = "",
+                    dataState = HomeUiState.CurrencyDataState.Loading,
+                    availableCurrenciesState = HomeUiState.AvailableCurrenciesState.Failure(
+                        "Please check your internet connection and try again."
+                    )
+                )
+            )
+
+            assertThat(awaitItem()).isEqualTo(
+                HomeUiState(
+                    exchangeFromUSDc = true,
+                    usdcTextField = "1",
+                    currencyTextField = "17.30",
+                    dataState = HomeUiState.CurrencyDataState.Success(
+                        expectedBook
+                    ),
+                    availableCurrenciesState = HomeUiState.AvailableCurrenciesState.Failure(
+                        "Please check your internet connection and try again."
+                    )
+                )
+            )
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
     fun `updateCurrency requests the selected currency code from repository`() = runTest {
-        // Given a HomeViewModel backed by the fake repository
-        // When updateCurrency is called with a selected currency
-        // Then the repository should receive that currency code
+        val expectedBook = baseBook
+        val expectedCurrencies = baseCurrencies
+
+        currencyRepository = FakeCurrencyRepository().apply{
+            currencyResult = CurrencyResult.CurrencySuccess(expectedBook)
+            currenciesResult = CurrenciesResult.CurrenciesSuccess(expectedCurrencies)
+        }
+
+        homeViewModel = HomeViewModel(
+            repository = currencyRepository
+        )
+
+        homeViewModel.uiState.test {
+            awaitItem() // initial state
+            awaitItem() // load available currencies
+
+            assertThat(awaitItem()).isEqualTo(
+                HomeUiState(
+                    exchangeFromUSDc = true,
+                    usdcTextField = "1",
+                    currencyTextField = "17.30",
+                    dataState = HomeUiState.CurrencyDataState.Success(
+                        expectedBook
+                    ),
+                    availableCurrenciesState = HomeUiState.AvailableCurrenciesState.Success(expectedCurrencies)
+                )
+            )
+            homeViewModel.updateCurrency(Currency.EURC)
+
+            assertThat(currencyRepository.lastCode).isEqualTo(Currency.EURC.code)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     companion object {
@@ -502,7 +603,4 @@ class HomeViewModelTests {
 
         val baseCurrencies = listOf(Currency.MXN, Currency.EURC)
     }
-
-
-
 }
