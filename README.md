@@ -1,11 +1,15 @@
+
+
+
+
 # **Currency Exchange Calculator** - Darryl Mak
 
 ### Description:
 1. **Convert between currencies** - Calculate conversions between USDc and a selected currency using live ask/bid market rates.
 2. **Change quote currency** - Pick from supported currencies in a bottom sheet and update the calculator with the selected market.
 
-(insert visuals, video)
 
+https://github.com/user-attachments/assets/34509c41-6a75-4f3b-b4e3-fd93b33eb876
 
 ### Setup Instructions
 #### Prerequisites
