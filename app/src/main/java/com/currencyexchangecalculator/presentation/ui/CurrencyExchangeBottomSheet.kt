@@ -85,11 +85,10 @@ fun CurrencyExchangeBottomSheet(
                                         onOptionSelected(currencyModel)
                                         coroutineScope.launch {
                                             sheetState.hide()
-                                        }.invokeOnCompletion {
                                             onNewCurrencySelected(currencyModel)
+                                        }.invokeOnCompletion {
                                             onDismissRequest()
                                         }
-
                                     },
                                     role = Role.RadioButton
                                 )

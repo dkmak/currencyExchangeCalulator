@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
@@ -231,7 +232,7 @@ fun ExchangeCalculator(
             ) {
                 Icon(
                     painterResource(R.drawable.arrow),
-                    contentDescription = "Swap Conversion",
+                    contentDescription = "Swap Currency Conversion",
                     modifier = Modifier.size(36.dp),
                     tint = Color.Unspecified,
                 )

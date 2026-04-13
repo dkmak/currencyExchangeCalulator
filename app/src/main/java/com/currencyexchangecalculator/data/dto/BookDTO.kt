@@ -27,7 +27,7 @@ fun BookDTO.toDomain(): Book {
 private fun parseBookForCurrency (book: String): Pair<Currency, Currency> {
     val bookParts = book.split("_")
 
-    if (bookParts.size != 2) { // throw an error instead?
+    if (bookParts.size != 2) {
         return (Currency.Unknown(label = "Unknown Currency", code = book) to
                 Currency.Unknown(label ="Unknown Currency",code = book))
     }
