@@ -45,7 +45,7 @@ https://github.com/user-attachments/assets/34509c41-6a75-4f3b-b4e3-fd93b33eb876
 
 
 ### Testing
-- Project is configured for unit and instrumentation tests
+You can run the current test suite with `./gradlew clean testDebugUnitTest`.
 
 ---
 

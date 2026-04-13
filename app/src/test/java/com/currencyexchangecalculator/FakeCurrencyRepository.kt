@@ -1,5 +1,6 @@
 package com.currencyexchangecalculator
 
+import com.currencyexchangecalculator.data.dto.toCurrencyModel
 import com.currencyexchangecalculator.domain.CurrenciesResult
 import com.currencyexchangecalculator.domain.CurrencyRepository
 import com.currencyexchangecalculator.domain.CurrencyResult

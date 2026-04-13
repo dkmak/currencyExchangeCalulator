@@ -1,4 +1,4 @@
-package com.currencyexchangecalculator.ui
+package com.currencyexchangecalculator.presentation.ui
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable

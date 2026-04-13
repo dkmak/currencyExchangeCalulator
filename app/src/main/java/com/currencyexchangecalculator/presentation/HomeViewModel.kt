@@ -22,7 +22,7 @@ data class HomeUiState(
     val usdcTextField: String = "",
     val currencyTextField: String = "",
     val dataState: CurrencyDataState = CurrencyDataState.Loading,
-    val availableCurrenciesState: AvailableCurrenciesState =  AvailableCurrenciesState.Loading
+    val availableCurrenciesState: AvailableCurrenciesState = AvailableCurrenciesState.Loading
 ) {
     sealed interface CurrencyDataState {
         data class Success(val book: Book) : CurrencyDataState
@@ -54,15 +54,21 @@ class HomeViewModel @Inject constructor(
             .onEach { result ->
                 _uiState.update { currentState ->
                     val dataState = result.toCurrencyDataState()
-                    if (dataState is HomeUiState.CurrencyDataState.Success){
+                    if (dataState is HomeUiState.CurrencyDataState.Success) {
                         val book = dataState.book
                         val rate = if (currentState.isUsdCToSelectedCurrency) book.bid else {
                             book.ask
                         }
+                        val usdcTextField =
+                            if (currentState.usdcTextField.isBlank()) {
+                                DEFAULT_BASE_CURRENCY_VALUE
+                            } else {
+                                currentState.usdcTextField
+                            }
                         currentState.copy(
                             dataState = dataState,
-                            usdcTextField = DEFAULT_BASE_CURRENCY_VALUE,
-                            currencyTextField = convertUsdcToCurrency(rate, DEFAULT_BASE_CURRENCY_VALUE)
+                            usdcTextField = usdcTextField,
+                            currencyTextField = convertUsdcToCurrency(rate, usdcTextField)
                         )
                     } else {
                         currentState.copy(
@@ -74,7 +80,7 @@ class HomeViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun getCurrencies(){
+    fun getCurrencies() {
         repository.getCurrencies()
             .onEach { result ->
                 _uiState.update { currentState ->
@@ -135,7 +141,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun updateConvertFromUSDc(){
+    fun updateConvertFromUSDc() {
         _uiState.update { currentState ->
             val newExchangeFromUSDc = !currentState.isUsdCToSelectedCurrency
             val book = (currentState.dataState as? HomeUiState.CurrencyDataState.Success)?.book
@@ -169,7 +175,8 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun convertCurrencyToUsdc(price: String, value: String): String {
-        return value.toBigDecimalOrNull()?.divide(price.toBigDecimalOrNull(), 2, RoundingMode.HALF_UP)
+        return value.toBigDecimalOrNull()
+            ?.divide(price.toBigDecimalOrNull(), 2, RoundingMode.HALF_UP)
             ?.toString()
             .orEmpty()
     }
@@ -179,12 +186,15 @@ class HomeViewModel @Inject constructor(
             is CurrencyResult.CurrencySuccess -> HomeUiState.CurrencyDataState.Success(
                 book = this.book
             )
+
             is CurrencyResult.CurrencyError.Backend -> HomeUiState.CurrencyDataState.Failure(
                 message = this.currencyErrorToUserMessage()
             )
+
             is CurrencyResult.CurrencyError.Network -> HomeUiState.CurrencyDataState.Failure(
                 message = this.currencyErrorToUserMessage()
             )
+
             is CurrencyResult.CurrencyError.Unknown -> HomeUiState.CurrencyDataState.Failure(
                 message = this.currencyErrorToUserMessage()
             )
@@ -196,12 +206,15 @@ class HomeViewModel @Inject constructor(
             is CurrenciesResult.CurrenciesSuccess -> HomeUiState.AvailableCurrenciesState.Success(
                 currencies = this.currencies
             )
+
             is CurrenciesResult.CurrenciesError.Backend -> HomeUiState.AvailableCurrenciesState.Failure(
                 message = this.currenciesErrorToUserMessage()
             )
+
             is CurrenciesResult.CurrenciesError.Network -> HomeUiState.AvailableCurrenciesState.Failure(
                 message = this.currenciesErrorToUserMessage()
             )
+
             is CurrenciesResult.CurrenciesError.Unknown -> HomeUiState.AvailableCurrenciesState.Failure(
                 message = this.currenciesErrorToUserMessage()
             )

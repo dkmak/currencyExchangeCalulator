@@ -1,4 +1,4 @@
-package com.currencyexchangecalculator.ui
+package com.currencyexchangecalculator.presentation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

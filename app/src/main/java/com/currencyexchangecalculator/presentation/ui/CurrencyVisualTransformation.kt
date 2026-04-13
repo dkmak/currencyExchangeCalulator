@@ -1,4 +1,4 @@
-package com.currencyexchangecalculator.ui
+package com.currencyexchangecalculator.presentation.ui
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping

@@ -28,8 +28,8 @@ private fun parseBookForCurrency (book: String): Pair<Currency, Currency> {
     val bookParts = book.split("_")
 
     if (bookParts.size != 2) { // throw an error instead?
-        return (Currency.Unknown(label = "Unknown Code", code = book) to
-                Currency.Unknown(label ="Unknown Code",code = book))
+        return (Currency.Unknown(label = "Unknown Currency", code = book) to
+                Currency.Unknown(label ="Unknown Currency",code = book))
     }
 
     val baseCurrency = bookParts[0].toCurrencyModel()
@@ -45,6 +45,6 @@ fun String.toCurrencyModel(): Currency {
         "EURC" -> Currency.EURC
         "BRL" -> Currency.BRL
         "COP" -> Currency.COP
-        else -> Currency.Unknown(label ="Unknown Code", code = this)
+        else -> Currency.Unknown(label ="Unknown Currency", code = this)
     }
 }
