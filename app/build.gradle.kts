@@ -91,4 +91,6 @@ dependencies {
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    implementation(libs.androidx.datastore.preferences)
 }
