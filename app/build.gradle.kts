@@ -97,5 +97,6 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     ksp(libs.androidx.room.ktx)
 
+    // Datastore
     implementation(libs.androidx.datastore.preferences)
 }
