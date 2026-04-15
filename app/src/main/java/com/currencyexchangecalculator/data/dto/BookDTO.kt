@@ -1,5 +1,6 @@
 package com.currencyexchangecalculator.data.dto
 
+import com.currencyexchangecalculator.data.database.BookEntity
 import com.currencyexchangecalculator.domain.Book
 import com.currencyexchangecalculator.domain.Currency
 import kotlinx.serialization.Serializable
@@ -20,6 +21,28 @@ fun BookDTO.toDomain(): Book {
         bid = this.bid,
         baseCurrency = baseCurrency,
         exchangeCurrency = exchangeCurrency,
+        date = this.date
+    )
+}
+
+fun BookDTO.toEntity(): BookEntity {
+    val bookParts = book.split("_")
+
+    return BookEntity(
+        ask = this.ask,
+        bid = this.bid,
+        baseCurrency = bookParts[0].uppercase(),
+        exchangeCurrency = bookParts[1].uppercase(),
+        date = this.date
+    )
+}
+
+fun BookEntity.toDomain(): Book {
+    return Book(
+        ask = this.ask,
+        bid = this.bid,
+        baseCurrency = this.baseCurrency.toCurrencyModel(),
+        exchangeCurrency = this.exchangeCurrency.toCurrencyModel(),
         date = this.date
     )
 }

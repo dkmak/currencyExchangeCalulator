@@ -19,3 +19,13 @@ sealed interface CurrenciesResult {
         data object Unknown : CurrenciesError
     }
 }
+
+sealed interface BookResult {
+    data class BookResultSuccess(val book: Book): BookResult
+
+    sealed interface BookError: BookResult {
+        data object Network : BookError
+        data object Backend : BookError
+        data object Unknown : BookError
+    }
+}

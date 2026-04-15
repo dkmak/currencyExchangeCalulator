@@ -1,8 +1,11 @@
 package com.currencyexchangecalculator.data
 
+import com.currencyexchangecalculator.data.database.BookDAO
 import com.currencyexchangecalculator.data.dto.BookDTO
 import com.currencyexchangecalculator.data.dto.toCurrencyModel
 import com.currencyexchangecalculator.data.dto.toDomain
+import com.currencyexchangecalculator.data.dto.toEntity
+import com.currencyexchangecalculator.domain.Book
 import com.currencyexchangecalculator.domain.CurrenciesResult
 import com.currencyexchangecalculator.domain.CurrencyRepository
 import com.currencyexchangecalculator.domain.CurrencyResult
@@ -24,10 +27,10 @@ import javax.inject.Singleton
 
 class CurrencyRepositoryImpl @Inject constructor(
     private val apiClient: ApiClient,
+    private val bookDAO: BookDAO,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): CurrencyRepository {
-
-    override fun getCurrency(code: String): Flow<CurrencyResult> = flow<CurrencyResult> {
+/*    override fun getCurrency(code: String): Flow<CurrencyResult> = flow<CurrencyResult> {
         val response: List<BookDTO?> = apiClient.getCurrency(code)
         val bookResult = response.mapNotNull { dto ->
             dto?.toDomain()
@@ -38,13 +41,50 @@ class CurrencyRepositoryImpl @Inject constructor(
             throw throwable
         }
         emit(throwable.toCurrencyDomainError())
+    }.flowOn(ioDispatcher)*/
+
+    override fun getCurrency(code: String): Flow<CurrencyResult> = flow<CurrencyResult> {
+        try {
+            val response: List<BookDTO?> = apiClient.getCurrency(code)
+            // insert new cached response
+            response.mapNotNull { dto ->
+                dto?.let{
+                    dto.toDomain()
+                    bookDAO.insert(dto.toEntity())
+                }
+            }.first()
+        } catch(throwable: Throwable) {
+            if (throwable is CancellationException) {
+                throw throwable
+            }
+
+            emit(CurrencyResult.CurrencySuccess(getCachedBook(code)))
+            return@flow
+        }
+
+        emit(CurrencyResult.CurrencySuccess(getCachedBook(code)))
     }.flowOn(ioDispatcher)
+
+    private suspend fun getCachedBook(code: String): Book {
+        return bookDAO.getBook(code).toDomain()
+    }
+
 
     override fun getCurrencies(): Flow<CurrenciesResult> = flow<CurrenciesResult> {
         val response  = apiClient.getCurrencies()
         val result = response.map{ currencyString ->
             currencyString.toCurrencyModel()
         }
+
+        val responseStrings = response.joinToString(",")
+        val currencyResponse = apiClient.getCurrency(responseStrings)
+        currencyResponse.forEach { bookDTO ->
+            val bookEntity = bookDTO?.toEntity()
+            bookEntity?.let{ entity ->
+                bookDAO.insert(bookEntity)
+            }
+        }
+
         emit(CurrenciesResult.CurrenciesSuccess(result))
     }.catch{ throwable ->
         if (throwable is CancellationException) {
