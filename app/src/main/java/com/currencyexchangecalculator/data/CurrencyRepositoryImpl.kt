@@ -5,7 +5,6 @@ import com.currencyexchangecalculator.data.database.BookEntity
 import com.currencyexchangecalculator.data.database.toBook
 import com.currencyexchangecalculator.data.dto.BookDTO
 import com.currencyexchangecalculator.data.dto.toCurrencyModel
-import com.currencyexchangecalculator.data.dto.toDomain
 import com.currencyexchangecalculator.data.dto.toEntity
 import com.currencyexchangecalculator.domain.CurrenciesResult
 import com.currencyexchangecalculator.domain.CurrencyRepository
@@ -38,7 +37,7 @@ class CurrencyRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ): CurrencyRepository {
 
-/*    override fun getCurrency(code: String): Flow<CurrencyResult> = flow<CurrencyResult> {
+    override fun getCurrency(code: String): Flow<CurrencyResult> = flow<CurrencyResult> {
         try {
             val response: List<BookDTO?> = apiClient.getCurrency(code)
             val bookResult = response.mapNotNull { dto ->
@@ -62,26 +61,6 @@ class CurrencyRepositoryImpl @Inject constructor(
             } else {
                 emit(error)
             }
-            return@flow
-        }
-        emit(throwable.toCurrencyDomainError())
-    }.flowOn(ioDispatcher)*/
-
-    override fun getCurrency(code: String): Flow<CurrencyResult> = flow<CurrencyResult> {
-        try {
-            val response: List<BookDTO?> = apiClient.getCurrency(code)
-            val bookResult = response.mapNotNull { dto ->
-                dto?.toEntity()
-            }.first()
-            bookDAO.insertBook(bookResult)
-            emit(CurrencyResult.CurrencySuccess(getCurrencyEntity(code).toBook()))
-        } catch (throwable: Throwable) {
-            if (throwable is CancellationException) {
-                throw throwable
-            }
-            val cachedResult = getCurrencyEntity(code).toBook()
-            emit(CurrencyResult.CurrencySuccess(cachedResult))
-            // emit(throwable.toCurrencyDomainError())
             return@flow
         }
     }.flowOn(ioDispatcher)

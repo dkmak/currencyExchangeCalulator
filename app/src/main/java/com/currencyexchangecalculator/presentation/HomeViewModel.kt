@@ -45,7 +45,7 @@ data class HomeUiState(
 }
 
 sealed interface UiEvent {
-    data class ShowToast(val message: String): UiEvent
+    data class ShowToast(val message: String) : UiEvent
 }
 
 @HiltViewModel
@@ -77,17 +77,20 @@ class HomeViewModel @Inject constructor(
             .onEach { result ->
                 _uiState.update { currentState ->
                     val dataState = result.toCurrencyDataState()
-                    val newState = when(result) {
-                        is CurrencyResult.CurrencySuccess ->{
+                    val newState = when (result) {
+                        is CurrencyResult.CurrencySuccess -> {
                             val book = (dataState as HomeUiState.CurrencyDataState.Success).book
                             val (usdcTextField, currencyTextField) =
-                            recalculateForCurrentDirection(
-                                book = book,
-                                isUsdCToSelectedCurrency = currentState.isUsdCToSelectedCurrency,
-                                usdcTextField = currentState.usdcTextField,
-                                    currencyTextField = currentState.currencyTextField
+                                recalculateForCurrentDirection(
+                                    book =
+                                        book,
+                                    isUsdCToSelectedCurrency = currentState.isUsdCToSelectedCurrency,
+                                    usdcTextField =
+                                        currentState.usdcTextField,
+                                    currencyTextField =
+                                        currentState.currencyTextField
                                 )
-                            if(result.isFromCache && result.warning != null){
+                            if (result.isFromCache && result.warning != null) {
                                 _events.emit(UiEvent.ShowToast("Showing cached data."))
                             }
                             currentState.copy(
@@ -96,6 +99,7 @@ class HomeViewModel @Inject constructor(
                                 currencyTextField = currencyTextField
                             )
                         }
+
                         is CurrencyResult.CurrencyError -> {
                             currentState.copy(
                                 dataState = dataState,
@@ -191,7 +195,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun updateSavedCurrencyPreferences(currency: Currency){
+    fun updateSavedCurrencyPreferences(currency: Currency) {
         viewModelScope.launch {
             preferencesRepository.savePreferredCurrency(currency.code)
 
@@ -246,7 +250,10 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    private fun calculateFromSelectedCurrency(book: Book, currencyValue: String): Pair<String, String> {
+    private fun calculateFromSelectedCurrency(
+        book: Book,
+        currencyValue: String
+    ): Pair<String, String> {
         if (currencyValue.isEmpty()) return "" to ""
 
         return convertCurrencyToUsdc(

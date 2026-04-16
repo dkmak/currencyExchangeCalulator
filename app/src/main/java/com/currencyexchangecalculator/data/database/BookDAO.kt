@@ -4,8 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.currencyexchangecalculator.domain.Book
-import java.nio.charset.CodingErrorAction.REPLACE
 
 @Dao
 interface BookDAO {
