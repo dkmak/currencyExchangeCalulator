@@ -2,17 +2,22 @@ package com.currencyexchangecalculator.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.currencyexchangecalculator.data.DataStoreRepository
+import com.currencyexchangecalculator.data.dto.toCurrencyModel
 import com.currencyexchangecalculator.domain.Book
 import com.currencyexchangecalculator.domain.CurrenciesResult
 import com.currencyexchangecalculator.domain.Currency
 import com.currencyexchangecalculator.domain.CurrencyRepository
 import com.currencyexchangecalculator.domain.CurrencyResult
+import com.currencyexchangecalculator.presentation.HomeViewModel.Companion.DEFAULT_START_EXCHANGE_CURRENCY
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.math.RoundingMode
 import javax.inject.Inject
 
@@ -21,6 +26,7 @@ data class HomeUiState(
     val isUsdCToSelectedCurrency: Boolean = true,
     val usdcTextField: String = "",
     val currencyTextField: String = "",
+    val preferredCurrency: Currency = DEFAULT_START_EXCHANGE_CURRENCY,
     val dataState: CurrencyDataState = CurrencyDataState.Loading,
     val availableCurrenciesState: AvailableCurrenciesState = AvailableCurrenciesState.Loading
 ) {
@@ -39,14 +45,23 @@ data class HomeUiState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: CurrencyRepository
+    private val repository: CurrencyRepository,
+    private val preferencesRepository: DataStoreRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
         getCurrencies()
-        updateCurrency(DEFAULT_START_EXCHANGE_CURRENCY)
+        preferencesRepository.preferredCurrencyCode.onEach { savedCode ->
+            _uiState.update { currentState ->
+                currentState.copy(
+                    preferredCurrency = savedCode.toCurrencyModel()
+                )
+            }
+
+            updateCurrency(savedCode.toCurrencyModel())
+        }.launchIn(viewModelScope)
     }
 
     fun updateCurrency(currency: Currency) {
@@ -80,7 +95,7 @@ class HomeViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun getCurrencies() {
+    private fun getCurrencies() {
         repository.getCurrencies()
             .onEach { result ->
                 _uiState.update { currentState ->
@@ -166,6 +181,19 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateSavedCurrencyPreferences(currency: Currency){
+        viewModelScope.launch {
+            preferencesRepository.savePreferredCurrency(currency.code)
+
+            _uiState.update { currentState ->
+                currentState.copy(
+                    preferredCurrency = currency
+                )
+            }
+        }
+    }
+
 
     private fun convertUsdcToCurrency(price: String, value: String): String {
         return value.toBigDecimalOrNull()?.multiply(price.toBigDecimalOrNull())

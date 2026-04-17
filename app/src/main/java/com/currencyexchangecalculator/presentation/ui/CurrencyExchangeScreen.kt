@@ -131,7 +131,9 @@ fun CurrencyExchangeCalculatorScreen(
                             onDismissRequest = {
                                 println("Bottom sheet dismissed")
                                 showBottomSheet = false
-                            }
+                            },
+                            preferredCurrency = uiState.preferredCurrency,
+                            onPreferredCurrencyClicked = {code -> viewModel.updateSavedCurrencyPreferences(code)}
                         )
                     }
                 }

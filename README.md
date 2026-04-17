@@ -32,6 +32,7 @@ https://github.com/user-attachments/assets/34509c41-6a75-4f3b-b4e3-fd93b33eb876
 - Main exchange calculator screen with bid/ask-based conversion
 - Bottom sheet currency picker
 - Proper loading and error states
+- User can set default preferred currency exchange rate.
 
 ### Networking
 - Integrate with [DolarApp API](https://api.dolarapp.dev/)

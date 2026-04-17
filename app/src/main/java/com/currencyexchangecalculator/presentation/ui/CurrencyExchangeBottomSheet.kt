@@ -13,9 +13,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
@@ -44,7 +48,9 @@ fun CurrencyExchangeBottomSheet(
     state: AvailableCurrenciesState,
     selected: Currency,
     onNewCurrencySelected: (Currency) -> Unit,
-    sheetState: SheetState
+    sheetState: SheetState,
+    preferredCurrency: Currency,
+    onPreferredCurrencyClicked: (Currency) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val (selectedCurrency, onOptionSelected) = remember { mutableStateOf(selected) }
@@ -96,14 +102,14 @@ fun CurrencyExchangeBottomSheet(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Box(
-                                modifier = Modifier.background(
-                                    color =MaterialTheme.colorScheme.background,
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                    .size(40.dp)
-                                ,
+                                modifier = Modifier
+                                    .background(
+                                        color = MaterialTheme.colorScheme.background,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                                    .size(40.dp),
                                 contentAlignment = Alignment.Center
-                            ){
+                            ) {
                                 Icon(
                                     painterResource(currencyModel.toDrawableResource()),
                                     contentDescription = "",
@@ -122,6 +128,20 @@ fun CurrencyExchangeBottomSheet(
                                 selected = (currencyModel == selectedCurrency),
                                 onClick = null
                             )
+                            IconButton(
+                                onClick = {
+                                    onPreferredCurrencyClicked(currencyModel)
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = if (currencyModel.code == preferredCurrency.code) Icons.Default.Favorite else {
+                                        Icons.Default.FavoriteBorder
+                                    },
+                                    contentDescription = "Preferred Currency",
+                                    tint = MaterialTheme.colorScheme.tertiary
+                                )
+                            }
+
                         }
                     }
                 }
@@ -148,7 +168,9 @@ private fun CurrencyExchangeBottomSheetPreview() {
                     Currency.EURC,
                 )
             ),
-            sheetState = rememberModalBottomSheetState()
+            sheetState = rememberModalBottomSheetState(),
+            preferredCurrency = Currency.MXN,
+            onPreferredCurrencyClicked = {}
         )
     }
 }
