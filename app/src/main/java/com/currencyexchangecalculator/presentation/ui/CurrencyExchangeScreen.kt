@@ -300,7 +300,7 @@ private fun CurrencyItem(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = "",
                     modifier = Modifier.size(16.dp),
-                    tint = Color.Unspecified
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
 
