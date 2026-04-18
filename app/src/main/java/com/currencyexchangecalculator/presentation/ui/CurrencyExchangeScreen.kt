@@ -63,7 +63,10 @@ fun CurrencyExchangeCalculatorScreen(
 
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -301,6 +304,7 @@ private fun CurrencyItem(
                 ),
                 visualTransformation = CurrencyVisualTransformation(),
                 textStyle = LocalTextStyle.current.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.End
                 )
             )
@@ -326,8 +330,34 @@ private fun CurrencyItemPreview() {
 
 @Preview(showBackground = true, backgroundColor = 0xFFEFEFEC)
 @Composable
-private fun ExchangeCalculatorPreview() {
-    CurrencyExchangeCalculatorTheme {
+private fun ExchangeCalculatorLightPreview() {
+    CurrencyExchangeCalculatorTheme(darkTheme = false) {
+        ExchangeCalculator(
+            book = Book(
+                ask = "18.42",
+                bid = "18.31",
+                date = "2026-04-08",
+                baseCurrency = Currency.USDC,
+                exchangeCurrency = Currency.MXN
+            ),
+            usdTextField = "1",
+            currencyTextField = "18.42",
+            exchangeFromUSD = true,
+            onUsdTextFieldChanged = {},
+            onCurrencyTextFieldChanged = {},
+            onChangeCurrency = {},
+            onSwapConversion = {},
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF101412)
+@Composable
+private fun ExchangeCalculatorDarkPreview() {
+    CurrencyExchangeCalculatorTheme(darkTheme = true) {
         ExchangeCalculator(
             book = Book(
                 ask = "18.42",

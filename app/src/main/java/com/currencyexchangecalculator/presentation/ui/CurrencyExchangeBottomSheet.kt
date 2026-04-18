@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -56,7 +57,8 @@ fun CurrencyExchangeBottomSheet(
     val (selectedCurrency, onOptionSelected) = remember { mutableStateOf(selected) }
     ModalBottomSheet(
         sheetState = sheetState,
-        onDismissRequest = onDismissRequest
+        onDismissRequest = onDismissRequest,
+        containerColor = MaterialTheme.colorScheme.surface
     ) {
         when (state) {
             is AvailableCurrenciesState.Failure -> {
@@ -104,7 +106,7 @@ fun CurrencyExchangeBottomSheet(
                             Box(
                                 modifier = Modifier
                                     .background(
-                                        color = MaterialTheme.colorScheme.background,
+                                        color = MaterialTheme.colorScheme.surfaceVariant,
                                         shape = RoundedCornerShape(8.dp)
                                     )
                                     .size(40.dp),
@@ -126,7 +128,11 @@ fun CurrencyExchangeBottomSheet(
                             Spacer(Modifier.weight(1f))
                             CustomRadioButton(
                                 selected = (currencyModel == selectedCurrency),
-                                onClick = null
+                                onClick = null,
+                                colors = RadioButtonDefaults.colors(
+                                    selectedColor = MaterialTheme.colorScheme.tertiary,
+                                    unselectedColor = MaterialTheme.colorScheme.outline
+                                )
                             )
                             IconButton(
                                 onClick = {
@@ -153,8 +159,33 @@ fun CurrencyExchangeBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-private fun CurrencyExchangeBottomSheetPreview() {
-    CurrencyExchangeCalculatorTheme {
+private fun CurrencyExchangeBottomSheetLightPreview() {
+    CurrencyExchangeCalculatorTheme(darkTheme = false) {
+        CurrencyExchangeBottomSheet(
+            onDismissRequest = {},
+            selected = Currency.MXN,
+            onNewCurrencySelected = {},
+            state = AvailableCurrenciesState.Success(
+                currencies = listOf(
+                    Currency.MXN,
+                    Currency.ARS,
+                    Currency.BRL,
+                    Currency.COP,
+                    Currency.EURC,
+                )
+            ),
+            sheetState = rememberModalBottomSheetState(),
+            preferredCurrency = Currency.MXN,
+            onPreferredCurrencyClicked = {}
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true, backgroundColor = 0xFF101412)
+@Composable
+private fun CurrencyExchangeBottomSheetDarkPreview() {
+    CurrencyExchangeCalculatorTheme(darkTheme = true) {
         CurrencyExchangeBottomSheet(
             onDismissRequest = {},
             selected = Currency.MXN,
