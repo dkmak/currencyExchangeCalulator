@@ -71,19 +71,17 @@ class HomeViewModel @Inject constructor(
                     val dataState = result.toCurrencyDataState()
                     if (dataState is HomeUiState.CurrencyDataState.Success) {
                         val book = dataState.book
-                        val rate = if (currentState.isUsdCToSelectedCurrency) book.bid else {
-                            book.ask
-                        }
-                        val usdcTextField =
-                            if (currentState.usdcTextField.isBlank()) {
-                                DEFAULT_BASE_CURRENCY_VALUE
-                            } else {
-                                currentState.usdcTextField
-                            }
+                        val (usdcTextField, currencyTextField) =
+                            recalculateForCurrentDirection(
+                                book = book,
+                                isUsdCToSelectedCurrency = currentState.isUsdCToSelectedCurrency,
+                                usdcTextField = currentState.usdcTextField,
+                                currencyTextField = currentState.currencyTextField
+                            )
                         currentState.copy(
                             dataState = dataState,
                             usdcTextField = usdcTextField,
-                            currencyTextField = convertUsdcToCurrency(rate, usdcTextField)
+                            currencyTextField = currencyTextField
                         )
                     } else {
                         currentState.copy(
@@ -162,17 +160,22 @@ class HomeViewModel @Inject constructor(
             val book = (currentState.dataState as? HomeUiState.CurrencyDataState.Success)?.book
 
             if (book != null) {
-                val usdcValue = currentState.usdcTextField
-                val recalculatedCurrencyValue = if (usdcValue.isNotEmpty()) {
-                    val rate = if (newExchangeFromUSDc) book.bid else book.ask
-                    convertUsdcToCurrency(rate, usdcValue)
+                val (usdcTextField, currencyTextField) = if (newExchangeFromUSDc) {
+                    calculateFromUsdc(
+                        book = book,
+                        usdcValue = currentState.usdcTextField
+                    )
                 } else {
-                    ""
+                    calculateFromSelectedCurrency(
+                        book = book,
+                        currencyValue = currentState.currencyTextField
+                    )
                 }
 
                 currentState.copy(
                     isUsdCToSelectedCurrency = newExchangeFromUSDc,
-                    currencyTextField = recalculatedCurrencyValue
+                    usdcTextField = usdcTextField,
+                    currencyTextField = currencyTextField
                 )
             } else {
                 currentState.copy(
@@ -207,6 +210,43 @@ class HomeViewModel @Inject constructor(
             ?.divide(price.toBigDecimalOrNull(), 2, RoundingMode.HALF_UP)
             ?.toString()
             .orEmpty()
+    }
+
+    private fun recalculateForCurrentDirection(
+        book: Book,
+        isUsdCToSelectedCurrency: Boolean,
+        usdcTextField: String,
+        currencyTextField: String
+    ): Pair<String, String> {
+        return if (isUsdCToSelectedCurrency) {
+            calculateFromUsdc(
+                book = book,
+                usdcValue = usdcTextField.ifBlank { DEFAULT_BASE_CURRENCY_VALUE }
+            )
+        } else {
+            calculateFromSelectedCurrency(
+                book = book,
+                currencyValue = currencyTextField.ifBlank { DEFAULT_BASE_CURRENCY_VALUE }
+            )
+        }
+    }
+
+    private fun calculateFromUsdc(book: Book, usdcValue: String): Pair<String, String> {
+        if (usdcValue.isEmpty()) return "" to ""
+
+        return usdcValue to convertUsdcToCurrency(
+            price = book.bid,
+            value = usdcValue
+        )
+    }
+
+    private fun calculateFromSelectedCurrency(book: Book, currencyValue: String): Pair<String, String> {
+        if (currencyValue.isEmpty()) return "" to ""
+
+        return convertCurrencyToUsdc(
+            price = book.ask,
+            value = currencyValue
+        ) to currencyValue
     }
 
     private fun CurrencyResult.toCurrencyDataState(): HomeUiState.CurrencyDataState {

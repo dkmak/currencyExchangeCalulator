@@ -413,7 +413,7 @@ class HomeViewModelTests {
     }
 
     @Test
-    fun `toggling exchange direction updates exchangeFromUSDc flag and updates calculations relative to the USDc value`() = runTest {
+    fun `toggling exchange direction keeps the newly selected source amount and recalculates the target`() = runTest {
         val expectedBook = baseBook
         val expectedCurrencies = baseCurrencies
 
@@ -446,8 +446,8 @@ class HomeViewModelTests {
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
                     isUsdCToSelectedCurrency = false,
-                    usdcTextField = "1",
-                    currencyTextField = "17.31",
+                    usdcTextField = "1.00",
+                    currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
                     ),
@@ -458,7 +458,7 @@ class HomeViewModelTests {
             assertThat(awaitItem()).isEqualTo(
                 HomeUiState(
                     isUsdCToSelectedCurrency = true,
-                    usdcTextField = "1",
+                    usdcTextField = "1.00",
                     currencyTextField = "17.30",
                     dataState = HomeUiState.CurrencyDataState.Success(
                         expectedBook
