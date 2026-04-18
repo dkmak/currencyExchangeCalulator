@@ -82,13 +82,10 @@ class HomeViewModel @Inject constructor(
                             val book = (dataState as HomeUiState.CurrencyDataState.Success).book
                             val (usdcTextField, currencyTextField) =
                             recalculateForCurrentDirection(
-                                book =
-                                book,
-                            isUsdCToSelectedCurrency = currentState.isUsdCToSelectedCurrency,
-                             usdcTextField =
-                                currentState.usdcTextField,
-                                    currencyTextField =
-                                    currentState.currencyTextField
+                                book = book,
+                                isUsdCToSelectedCurrency = currentState.isUsdCToSelectedCurrency,
+                                usdcTextField = currentState.usdcTextField,
+                                    currencyTextField = currentState.currencyTextField
                                 )
                             if(result.isFromCache && result.warning != null){
                                 _events.emit(UiEvent.ShowToast("Showing cached data."))
