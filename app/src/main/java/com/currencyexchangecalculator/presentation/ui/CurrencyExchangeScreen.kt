@@ -105,9 +105,6 @@ fun CurrencyExchangeCalculatorScreen(
                                 newValue
                             )
                         },
-                        onClickTextField = {
-                            viewModel.clearTextFieldValues()
-                        },
                         onChangeCurrency = {
                             showBottomSheet = true
                         },
@@ -150,7 +147,6 @@ fun ExchangeCalculator(
     exchangeFromUSD: Boolean,
     onUsdTextFieldChanged: (String) -> Unit,
     onCurrencyTextFieldChanged: (String) -> Unit,
-    onClickTextField: () -> Unit,
     onChangeCurrency: () -> Unit,
     onSwapConversion: () -> Unit,
     modifier: Modifier = Modifier
@@ -190,8 +186,7 @@ fun ExchangeCalculator(
                         iconResource = book.baseCurrency.toDrawableResource(),
                         isClickable = false,
                         onCurrencyTextFieldChanged = onUsdTextFieldChanged,
-                        onClick = {},
-                        onClickTextField = onClickTextField
+                        onClick = {}
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     CurrencyItem(
@@ -200,8 +195,7 @@ fun ExchangeCalculator(
                         iconResource = book.exchangeCurrency.toDrawableResource(),
                         isClickable = true,
                         onCurrencyTextFieldChanged = onCurrencyTextFieldChanged,
-                        onClick = { onChangeCurrency() },
-                        onClickTextField = onClickTextField,
+                        onClick = { onChangeCurrency() }
                     )
                 } else {
                     CurrencyItem(
@@ -210,8 +204,7 @@ fun ExchangeCalculator(
                         iconResource = book.exchangeCurrency.toDrawableResource(),
                         isClickable = true,
                         onCurrencyTextFieldChanged = onCurrencyTextFieldChanged,
-                        onClick = { onChangeCurrency() },
-                        onClickTextField = onClickTextField,
+                        onClick = { onChangeCurrency() }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     CurrencyItem(
@@ -220,8 +213,7 @@ fun ExchangeCalculator(
                         iconResource = book.baseCurrency.toDrawableResource(),
                         isClickable = false,
                         onCurrencyTextFieldChanged = onUsdTextFieldChanged,
-                        onClick = {},
-                        onClickTextField = onClickTextField
+                        onClick = {}
                     )
                 }
             }
@@ -251,7 +243,6 @@ private fun CurrencyItem(
     iconResource: Int,
     isClickable: Boolean,
     onClick: () -> Unit,
-    onClickTextField: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val itemModifier = if (isClickable){
@@ -303,12 +294,7 @@ private fun CurrencyItem(
                     onCurrencyTextFieldChanged(newValue)
                 },
                 modifier = Modifier
-                    .wrapContentWidth()
-                    .onFocusChanged { focusState ->
-                        if (focusState.isFocused) {
-                            onClickTextField()
-                        }
-                    },
+                    .wrapContentWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number
@@ -332,7 +318,6 @@ private fun CurrencyItemPreview() {
             iconResource = R.drawable.mxn_flag,
             isClickable = true,
             onCurrencyTextFieldChanged = {},
-            onClickTextField = {},
             onClick = {},
             modifier = Modifier.padding(16.dp)
         )
@@ -356,7 +341,6 @@ private fun ExchangeCalculatorPreview() {
             exchangeFromUSD = true,
             onUsdTextFieldChanged = {},
             onCurrencyTextFieldChanged = {},
-            onClickTextField = {},
             onChangeCurrency = {},
             onSwapConversion = {},
             modifier = Modifier

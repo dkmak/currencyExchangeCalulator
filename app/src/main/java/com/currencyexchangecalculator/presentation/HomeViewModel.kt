@@ -145,15 +145,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun clearTextFieldValues() {
-        _uiState.update { currentState ->
-            currentState.copy(
-                usdcTextField = "",
-                currencyTextField = ""
-            )
-        }
-    }
-
     fun updateConvertFromUSDc() {
         _uiState.update { currentState ->
             val newExchangeFromUSDc = !currentState.isUsdCToSelectedCurrency
