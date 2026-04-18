@@ -471,6 +471,73 @@ class HomeViewModelTests {
     }
 
     @Test
+    fun `updating currency while exchanging from selected currency recalculates USDc from selected currency value`() = runTest {
+        val expectedCurrencies = baseCurrencies
+        val updatedBook = Book(
+            ask = "20.00",
+            bid = "19.50",
+            baseCurrency = Currency.USDC,
+            exchangeCurrency = Currency.EURC,
+            date = ""
+        )
+
+        currencyRepository = FakeCurrencyRepository().apply{
+            currencyResult = CurrencyResult.CurrencySuccess(baseBook)
+            currenciesResult = CurrenciesResult.CurrenciesSuccess(expectedCurrencies)
+        }
+
+        homeViewModel = HomeViewModel(
+            repository = currencyRepository
+        )
+
+        homeViewModel.uiState.test {
+            awaitItem() // initial state
+            awaitItem() // load available currencies
+
+            assertThat(awaitItem()).isEqualTo(
+                HomeUiState(
+                    isUsdCToSelectedCurrency = true,
+                    usdcTextField = "1",
+                    currencyTextField = "17.30",
+                    dataState = HomeUiState.CurrencyDataState.Success(
+                        baseBook
+                    ),
+                    availableCurrenciesState = HomeUiState.AvailableCurrenciesState.Success(expectedCurrencies)
+                )
+            )
+
+            homeViewModel.updateConvertFromUSDc()
+            assertThat(awaitItem()).isEqualTo(
+                HomeUiState(
+                    isUsdCToSelectedCurrency = false,
+                    usdcTextField = "1.00",
+                    currencyTextField = "17.30",
+                    dataState = HomeUiState.CurrencyDataState.Success(
+                        baseBook
+                    ),
+                    availableCurrenciesState = HomeUiState.AvailableCurrenciesState.Success(expectedCurrencies)
+                )
+            )
+
+            currencyRepository.currencyResult = CurrencyResult.CurrencySuccess(updatedBook)
+            homeViewModel.updateCurrency(Currency.EURC)
+
+            assertThat(awaitItem()).isEqualTo(
+                HomeUiState(
+                    isUsdCToSelectedCurrency = false,
+                    usdcTextField = "0.87",
+                    currencyTextField = "17.30",
+                    dataState = HomeUiState.CurrencyDataState.Success(
+                        updatedBook
+                    ),
+                    availableCurrenciesState = HomeUiState.AvailableCurrenciesState.Success(expectedCurrencies)
+                )
+            )
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `exception currency quote failure updates dataState with failure`() = runTest {
         val expectedCurrencies = baseCurrencies
 
