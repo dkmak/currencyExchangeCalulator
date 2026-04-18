@@ -92,5 +92,11 @@ dependencies {
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    //Room
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.ktx)
+
+    // Datastore
     implementation(libs.androidx.datastore.preferences)
 }

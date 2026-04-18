@@ -11,6 +11,7 @@ import com.currencyexchangecalculator.domain.CurrencyRepository
 import com.currencyexchangecalculator.domain.CurrencyResult
 import com.currencyexchangecalculator.presentation.HomeViewModel.Companion.DEFAULT_START_EXCHANGE_CURRENCY
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -43,6 +44,10 @@ data class HomeUiState(
     }
 }
 
+sealed interface UiEvent {
+    data class ShowToast(val message: String) : UiEvent
+}
+
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: CurrencyRepository,
@@ -50,6 +55,9 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _events = MutableSharedFlow<UiEvent>()
+    val events = _events
 
     init {
         getCurrencies()
@@ -69,25 +77,36 @@ class HomeViewModel @Inject constructor(
             .onEach { result ->
                 _uiState.update { currentState ->
                     val dataState = result.toCurrencyDataState()
-                    if (dataState is HomeUiState.CurrencyDataState.Success) {
-                        val book = dataState.book
-                        val (usdcTextField, currencyTextField) =
-                            recalculateForCurrentDirection(
-                                book = book,
-                                isUsdCToSelectedCurrency = currentState.isUsdCToSelectedCurrency,
-                                usdcTextField = currentState.usdcTextField,
-                                currencyTextField = currentState.currencyTextField
+                    val newState = when (result) {
+                        is CurrencyResult.CurrencySuccess -> {
+                            val book = (dataState as HomeUiState.CurrencyDataState.Success).book
+                            val (usdcTextField, currencyTextField) =
+                                recalculateForCurrentDirection(
+                                    book =
+                                        book,
+                                    isUsdCToSelectedCurrency = currentState.isUsdCToSelectedCurrency,
+                                    usdcTextField =
+                                        currentState.usdcTextField,
+                                    currencyTextField =
+                                        currentState.currencyTextField
+                                )
+                            if (result.isFromCache && result.warning != null) {
+                                _events.emit(UiEvent.ShowToast("Showing cached data."))
+                            }
+                            currentState.copy(
+                                dataState = dataState,
+                                usdcTextField = usdcTextField,
+                                currencyTextField = currencyTextField
                             )
-                        currentState.copy(
-                            dataState = dataState,
-                            usdcTextField = usdcTextField,
-                            currencyTextField = currencyTextField
-                        )
-                    } else {
-                        currentState.copy(
-                            dataState = dataState,
-                        )
+                        }
+
+                        is CurrencyResult.CurrencyError -> {
+                            currentState.copy(
+                                dataState = dataState,
+                            )
+                        }
                     }
+                    newState
                 }
             }
             .launchIn(viewModelScope)
@@ -176,7 +195,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun updateSavedCurrencyPreferences(currency: Currency){
+    fun updateSavedCurrencyPreferences(currency: Currency) {
         viewModelScope.launch {
             preferencesRepository.savePreferredCurrency(currency.code)
 
@@ -231,7 +250,10 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    private fun calculateFromSelectedCurrency(book: Book, currencyValue: String): Pair<String, String> {
+    private fun calculateFromSelectedCurrency(
+        book: Book,
+        currencyValue: String
+    ): Pair<String, String> {
         if (currencyValue.isEmpty()) return "" to ""
 
         return convertCurrencyToUsdc(
