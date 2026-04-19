@@ -4,7 +4,7 @@
 1. **Convert between currencies** - Calculate conversions between USDc and a selected currency using live ask/bid market rates.
 2. **Change quote currency** - Pick from supported currencies in a bottom sheet and update the calculator with the selected market.
 
-https://github.com/user-attachments/assets/34509c41-6a75-4f3b-b4e3-fd93b33eb876
+https://github.com/user-attachments/assets/c99f6383-c52f-466e-90e6-2dc69df181c7
 
 ### Setup Instructions
 #### Prerequisites
